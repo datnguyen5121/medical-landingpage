@@ -1,18 +1,21 @@
 import { GetStaticPaths, GetStaticProps } from "next"
 import Link from "next/link"
+import Image from "next/image"
+import { PortableText } from "@portabletext/react"
 import Layout from "../../components/Layout"
-import { products, Product } from "../../data/products"
+import { getAllProductSlugs, getProductBySlug, getRelatedProducts, SanityProduct } from "../../lib/sanity/queries"
+import { urlFor } from "../../lib/sanity/image"
 
 interface Props {
-  product: Product
-  related: Product[]
+  product: SanityProduct
+  related: SanityProduct[]
 }
 
 export default function ProductDetail({ product, related }: Props) {
   return (
     <Layout
-      title={`${product.name} | Mediplus`}
-      description={product.description}
+      title={`${product.seoTitle || product.name} | Mediplus`}
+      description={product.shortDescription || product.name}
     >
       {/* ── BREADCRUMB ───────────────────────────────────────────────────── */}
       <div className="bg-slate-50 border-b border-slate-200">
@@ -35,6 +38,9 @@ export default function ProductDetail({ product, related }: Props) {
             <svg className="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
+            <svg className="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
             <span className="text-slate-800 font-medium line-clamp-1">{product.name}</span>
           </nav>
         </div>
@@ -47,11 +53,22 @@ export default function ProductDetail({ product, related }: Props) {
 
             {/* Left: Image */}
             <div>
-              <div className="bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center h-96 relative">
-                <svg className="w-32 h-32 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={0.8}
-                    d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" />
-                </svg>
+              <div className="bg-white border border-slate-200 rounded-xl flex items-center justify-center h-96 relative overflow-hidden">
+                {product.mainImage ? (
+                  <Image
+                    src={urlFor(product.mainImage).width(800).height(800).url()}
+                    alt={product.mainImage.alt || product.name}
+                    fill
+                    className="object-contain p-6 drop-shadow-md"
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    priority
+                  />
+                ) : (
+                  <svg className="w-32 h-32 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={0.8}
+                      d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" />
+                  </svg>
+                )}
                 {product.isBestSeller && (
                   <span className="absolute top-4 left-4 bg-blue-700 text-white text-sm font-bold px-4 py-1.5 rounded-full">
                     Bán chạy
@@ -75,13 +92,15 @@ export default function ProductDetail({ product, related }: Props) {
                 {product.category}
               </span>
               <h1 className="text-3xl font-bold text-slate-900 leading-tight mb-4">{product.name}</h1>
-              <p className="text-base text-slate-600 leading-relaxed mb-8">{product.description}</p>
+              {product.shortDescription && (
+                <p className="text-base text-slate-600 leading-relaxed mb-6">{product.shortDescription}</p>
+              )}
 
               {/* Features */}
               <div className="mb-8">
                 <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">Tính năng nổi bật</h3>
                 <div className="space-y-3">
-                  {product.features.map((f) => (
+                  {(product.features || []).map((f) => (
                     <div key={f} className="flex items-start gap-3">
                       <div className="w-5 h-5 bg-teal-100 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                         <svg className="w-3 h-3 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -129,6 +148,26 @@ export default function ProductDetail({ product, related }: Props) {
           </div>
         </div>
       </section>
+
+      {/* ── FULL DESCRIPTION ─────────────────────────────────────────────── */}
+      {product.description && product.description.length > 0 && (
+        <section className="py-12 bg-white border-t border-slate-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-3xl">
+              <p className="section-label mb-1">Thông Tin Sản Phẩm</p>
+              <h2 className="text-2xl font-bold text-slate-900 mb-8">Mô Tả Chi Tiết</h2>
+              <div className="prose prose-slate prose-lg max-w-none
+                prose-headings:font-bold prose-headings:text-slate-900
+                prose-h2:text-xl prose-h3:text-lg
+                prose-p:text-slate-700 prose-p:leading-relaxed
+                prose-li:text-slate-700 prose-strong:text-slate-900
+                prose-ul:space-y-1">
+                <PortableText value={product.description} />
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── SPECS TABLE ──────────────────────────────────────────────────── */}
       {product.specs && product.specs.length > 0 && (
@@ -192,6 +231,7 @@ export default function ProductDetail({ product, related }: Props) {
                 href={`/san-pham?category=${encodeURIComponent(product.category)}`}
                 className="text-sm font-semibold text-blue-700 hover:text-blue-900 flex items-center gap-1"
               >
+
                 Xem tất cả
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -201,15 +241,25 @@ export default function ProductDetail({ product, related }: Props) {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {related.map((rel) => (
                 <Link
-                  key={rel.id}
-                  href={`/san-pham/${rel.id}`}
+                  key={rel._id}
+                  href={`/san-pham/${rel.slug.current}`}
                   className="card flex flex-col overflow-hidden group hover:shadow-md transition-shadow"
                 >
-                  <div className="h-44 bg-slate-100 border-b border-slate-200 flex items-center justify-center relative">
-                    <svg className="w-14 h-14 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1}
-                        d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" />
-                    </svg>
+                  <div className="h-44 bg-slate-100 border-b border-slate-200 flex items-center justify-center relative overflow-hidden">
+                    {rel.mainImage ? (
+                      <Image
+                        src={urlFor(rel.mainImage).width(400).height(300).url()}
+                        alt={rel.mainImage.alt || rel.name}
+                        fill
+                        className="object-contain p-4"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      />
+                    ) : (
+                      <svg className="w-14 h-14 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1}
+                          d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" />
+                      </svg>
+                    )}
                     {rel.isBestSeller && (
                       <span className="absolute top-3 left-3 bg-blue-700 text-white text-xs font-semibold px-2.5 py-1 rounded">
                         Bán chạy
@@ -220,7 +270,7 @@ export default function ProductDetail({ product, related }: Props) {
                     <h3 className="text-base font-bold text-slate-900 mb-2 leading-snug group-hover:text-blue-700 transition-colors">
                       {rel.name}
                     </h3>
-                    <p className="text-sm text-slate-500 leading-relaxed line-clamp-2 flex-1">{rel.description}</p>
+                    <p className="text-sm text-slate-500 leading-relaxed line-clamp-2 flex-1">{rel.shortDescription}</p>
                     <div className="mt-4 flex items-center text-sm font-semibold text-blue-700 group-hover:gap-2 gap-1 transition-all">
                       Xem chi tiết
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -263,19 +313,21 @@ export default function ProductDetail({ product, related }: Props) {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const paths = products.map((p) => ({ params: { id: p.id } }))
-  return { paths, fallback: false }
+  const slugs = await getAllProductSlugs()
+  const paths = slugs.map((s) => ({ params: { id: s.slug } }))
+  return { paths, fallback: 'blocking' }
 }
 
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
-  const id = params?.id as string
-  const product = products.find((p) => p.id === id)
+  const slug = params?.id as string
+  const product = await getProductBySlug(slug)
 
   if (!product) return { notFound: true }
 
-  const related = products
-    .filter((p) => p.category === product.category && p.id !== product.id)
-    .slice(0, 3)
+  const related = await getRelatedProducts(product.category, slug, 3)
 
-  return { props: { product, related } }
+  return {
+    props: { product, related },
+    revalidate: 60,
+  }
 }

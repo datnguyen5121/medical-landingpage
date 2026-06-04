@@ -1,8 +1,9 @@
 ﻿import Layout from "../components/Layout"
 import Link from "next/link"
+import Image from "next/image"
 import { products, categories } from "../data/products"
 
-const bestSellers = products.filter((p) => p.isBestSeller)
+const robotProducts = products.filter((p) => p.category === "Robot Phục Hồi")
 
 const categoryMeta: Record<string, { icon: string; color: string }> = {
   "Robot Phuc Hoi":     { icon: "robot",    color: "bg-blue-50 text-blue-700 border-blue-200" },
@@ -197,25 +198,32 @@ export default function HomePage() {
               <p className="section-label mb-1">Nổi Bật</p>
               <h2 className="section-title">Sản Phẩm Được Tin Dùng Nhiều Nhất</h2>
             </div>
-            <Link href="/san-pham" className="text-sm font-semibold text-blue-700 hover:text-blue-900 flex items-center gap-1 shrink-0">
-              Xem thêm
+            <Link href="/san-pham?category=Robot%20Ph%E1%BB%A5c%20H%E1%BB%93i" className="text-sm font-semibold text-blue-700 hover:text-blue-900 flex items-center gap-1 shrink-0">
+              Xem tất cả
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </Link>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {bestSellers.map((product) => (
+            {robotProducts.map((product) => (
               <div key={product.id} className="card flex flex-col overflow-hidden group">
                 {/* Product image area */}
                 <Link href={`/san-pham/${product.id}`} className="block">
-                <div className="h-56 bg-slate-100 border-b border-slate-200 flex items-center justify-center relative hover:bg-slate-200 transition-colors">
-                  <svg className="w-20 h-20 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" />
-                  </svg>
-                  <span className="absolute top-3 left-3 bg-blue-700 text-white text-sm font-semibold px-3 py-1 rounded">
-                    Bán chạy
-                  </span>
+                <div className="h-56 bg-white border-b border-slate-200 flex items-center justify-center relative overflow-hidden">
+                  {product.image ? (
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      fill
+                      className="object-contain p-4 drop-shadow-sm"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    />
+                  ) : (
+                    <svg className="w-20 h-20 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" />
+                    </svg>
+                  )}
                 </div>
                 </Link>
                 <div className="p-6 flex flex-col flex-1">

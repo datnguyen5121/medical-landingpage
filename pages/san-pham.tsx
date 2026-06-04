@@ -1,10 +1,18 @@
-﻿import Layout from "../components/Layout"
+﻿import { GetStaticProps } from "next"
+import Layout from "../components/Layout"
 import Link from "next/link"
-import { products, categories } from "../data/products"
+import Image from "next/image"
+import { getAllProducts, getCategories, SanityProduct } from "../lib/sanity/queries"
+import { urlFor } from "../lib/sanity/image"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/router"
 
-export default function SanPhamPage() {
+interface Props {
+  products: SanityProduct[]
+  categories: string[]
+}
+
+export default function SanPhamPage({ products, categories }: Props) {
   const router = useRouter()
   const [activeCategory, setActiveCategory] = useState<string>("Tất cả")
 
@@ -48,7 +56,7 @@ export default function SanPhamPage() {
                 </div>
                 <div className="divide-y divide-slate-100">
                   {allCategories.map((cat) => {
-                    const count = cat === "Tất cả"
+                  const count = cat === "Tất cả"
                       ? products.length
                       : products.filter((p) => p.category === cat).length
                     return (
@@ -101,12 +109,22 @@ export default function SanPhamPage() {
 
               <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
                 {filtered.map((product) => (
-                    <div key={product.id} className="card flex flex-col overflow-hidden group">
-                    <Link href={`/san-pham/${product.id}`} className="block">
-                    <div className="h-52 bg-slate-100 border-b border-slate-200 flex items-center justify-center relative hover:bg-slate-200 transition-colors">
-                      <svg className="w-16 h-16 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" />
-                      </svg>
+                    <div key={product._id} className="card flex flex-col overflow-hidden group">
+                    <Link href={`/san-pham/${product.slug.current}`} className="block">
+                    <div className="h-52 bg-white border-b border-slate-200 flex items-center justify-center relative overflow-hidden">
+                      {product.mainImage ? (
+                        <Image
+                          src={urlFor(product.mainImage).width(600).height(500).url()}
+                          alt={product.mainImage.alt || product.name}
+                          fill
+                          className="object-contain p-4 drop-shadow-sm"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                        />
+                      ) : (
+                        <svg className="w-16 h-16 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" />
+                        </svg>
+                      )}
                       {product.isBestSeller && (
                         <span className="absolute top-3 left-3 bg-blue-700 text-white text-sm font-semibold px-3 py-1 rounded">
                           Bán chạy
@@ -116,12 +134,12 @@ export default function SanPhamPage() {
                     </Link>
                     <div className="p-6 flex flex-col flex-1">
                       <p className="text-sm font-semibold text-blue-700 uppercase tracking-wide mb-2">{product.category}</p>
-                      <Link href={`/san-pham/${product.id}`}>
+                      <Link href={`/san-pham/${product.slug.current}`}>
                       <h3 className="text-base font-bold text-slate-900 mb-2 leading-snug hover:text-blue-700 transition-colors">{product.name}</h3>
                       </Link>
-                      <p className="text-sm text-slate-500 leading-relaxed line-clamp-2 mb-3 flex-1">{product.description}</p>
+                      <p className="text-sm text-slate-500 leading-relaxed line-clamp-2 mb-3 flex-1">{product.shortDescription}</p>
                       <div className="space-y-2 mb-4">
-                        {product.features.slice(0, 3).map((f) => (
+                        {(product.features || []).slice(0, 3).map((f) => (
                           <div key={f} className="flex items-start gap-2">
                             <svg className="w-4 h-4 text-teal-600 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
@@ -146,4 +164,15 @@ export default function SanPhamPage() {
       </section>
     </Layout>
   )
+}
+
+export const getStaticProps: GetStaticProps<Props> = async () => {
+  const [products, categories] = await Promise.all([
+    getAllProducts(),
+    getCategories(),
+  ])
+  return {
+    props: { products, categories },
+    revalidate: 60,
+  }
 }
