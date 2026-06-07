@@ -98,9 +98,12 @@ export default function ProductDetail({ product, related }: Props) {
 
               {/* Features */}
               <div className="mb-8">
+                {product.features && product.features?.length > 0 &&
                 <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">Tính năng nổi bật</h3>
+                
+                }
                 <div className="space-y-3">
-                  {(product.features || []).map((f) => (
+                  {product.features && product.features?.length > 0 &&product.features.map((f) => (
                     <div key={f} className="flex items-start gap-3">
                       <div className="w-5 h-5 bg-teal-100 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                         <svg className="w-3 h-3 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">

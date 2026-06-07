@@ -111,13 +111,13 @@ export default function SanPhamPage({ products, categories }: Props) {
                 {filtered.map((product) => (
                     <div key={product._id} className="card flex flex-col overflow-hidden group">
                     <Link href={`/san-pham/${product.slug.current}`} className="block">
-                    <div className="h-52 bg-white border-b border-slate-200 flex items-center justify-center relative overflow-hidden">
+                    <div className="h-72 w-72 bg-white border-b border-slate-200 flex items-center justify-center relative overflow-hidden mx-auto">
                       {product.mainImage ? (
                         <Image
-                          src={urlFor(product.mainImage).width(600).height(500).url()}
+                          src={urlFor(product.mainImage).width(600).height(600).url()}
                           alt={product.mainImage.alt || product.name}
                           fill
-                          className="object-contain p-4 drop-shadow-sm"
+                          className="object-cover object-center"
                           sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
                         />
                       ) : (

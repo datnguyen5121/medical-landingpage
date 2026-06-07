@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import Navbar from './Navbar'
 import Footer from './Footer'
+import FloatingButtons from './FloatingButtons'
 import type { ReactNode } from 'react'
 
 interface LayoutProps {
@@ -21,6 +22,7 @@ export default function Layout({ children, title = 'Mediplus – Thiết Bị Y 
       <Navbar />
       <main className="min-h-screen">{children}</main>
       <Footer />
+      <FloatingButtons />
     </>
   )
 }
