@@ -1,14 +1,87 @@
 import { GetStaticPaths, GetStaticProps } from "next"
 import Link from "next/link"
 import Image from "next/image"
+import { useState } from "react"
 import { PortableText } from "@portabletext/react"
 import Layout from "../../components/Layout"
-import { getAllProductSlugs, getProductBySlug, getRelatedProducts, SanityProduct } from "../../lib/sanity/queries"
+import { getAllProductSlugs, getProductBySlugWithGalleries, getRelatedProducts, SanityProduct } from "../../lib/sanity/queries"
 import { urlFor } from "../../lib/sanity/image"
 
 interface Props {
   product: SanityProduct
   related: SanityProduct[]
+}
+
+function ImageGallery({ product }: { product: SanityProduct }) {
+  const [activeImageIndex, setActiveImageIndex] = useState(0)
+  const allImages = [
+    ...(product.mainImage ? [product.mainImage] : []),
+    ...(product.galleries || [])
+  ]
+  
+  if (allImages.length === 0) {
+    return (
+      <div className="bg-white border border-slate-200 rounded-xl flex items-center justify-center h-96 relative overflow-hidden">
+        <svg className="w-32 h-32 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={0.8}
+            d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" />
+        </svg>
+      </div>
+    )
+  }
+  
+  const currentImage = allImages[activeImageIndex]
+  
+  return (
+    <div className="space-y-3">
+      <div className="bg-white border border-slate-200 rounded-xl flex items-center justify-center h-96 relative overflow-hidden">
+        <Image
+          src={urlFor(currentImage).width(800).height(800).url()}
+          alt={currentImage.alt || "Sản phẩm"}
+          fill
+          className="object-contain p-6 drop-shadow-md"
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          priority
+        />
+        {product.isBestSeller && (
+          <span className="absolute top-4 left-4 bg-blue-700 text-white text-sm font-bold px-4 py-1.5 rounded-full">Bán chạy</span>
+        )}
+      </div>
+      
+      {allImages.length > 1 && (
+        <div className="flex gap-2 overflow-x-auto pb-2">
+          {allImages.map((img, idx) => (
+            <button
+              key={idx}
+              onClick={() => setActiveImageIndex(idx)}
+              className={`flex-shrink-0 w-20 h-20 rounded-lg border-2 overflow-hidden transition-all ${activeImageIndex === idx ? 'border-blue-700 ring-2 ring-blue-700/50' : 'border-slate-200 hover:border-slate-300'}`}
+            >
+              <Image
+                src={urlFor(img).width(100).height(100).url()}
+                alt={`Ảnh ${idx + 1}`}
+                width={100}
+                height={100}
+                className="w-full h-full object-contain bg-slate-50"
+              />
+            </button>
+          ))}
+        </div>
+      )}
+      
+      {allImages.length > 1 && (
+        <div className="text-center text-sm text-slate-500">Ảnh {activeImageIndex + 1} / {allImages.length}</div>
+      )}
+      
+      <div className="flex gap-3 mt-4">
+        {["CE", "ISO 13485", "GMP-WHO"].map((cert) => (
+          <div key={cert} className="flex-1 bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-center">
+            <p className="text-xs font-bold text-blue-800">{cert}</p>
+            <p className="text-xs text-slate-400">Chứng nhận</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
 }
 
 export default function ProductDetail({ product, related }: Props) {
@@ -51,39 +124,9 @@ export default function ProductDetail({ product, related }: Props) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-start">
 
-            {/* Left: Image */}
+            {/* Left: Image Gallery */}
             <div>
-              <div className="bg-white border border-slate-200 rounded-xl flex items-center justify-center h-96 relative overflow-hidden">
-                {product.mainImage ? (
-                  <Image
-                    src={urlFor(product.mainImage).width(800).height(800).url()}
-                    alt={product.mainImage.alt || product.name}
-                    fill
-                    className="object-contain p-6 drop-shadow-md"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    priority
-                  />
-                ) : (
-                  <svg className="w-32 h-32 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={0.8}
-                      d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" />
-                  </svg>
-                )}
-                {product.isBestSeller && (
-                  <span className="absolute top-4 left-4 bg-blue-700 text-white text-sm font-bold px-4 py-1.5 rounded-full">
-                    Bán chạy
-                  </span>
-                )}
-              </div>
-              {/* Cert badges */}
-              <div className="flex gap-3 mt-4">
-                {["CE", "ISO 13485", "GMP-WHO"].map((cert) => (
-                  <div key={cert} className="flex-1 bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-center">
-                    <p className="text-xs font-bold text-blue-800">{cert}</p>
-                    <p className="text-xs text-slate-400">Chứng nhận</p>
-                  </div>
-                ))}
-              </div>
+              <ImageGallery product={product} />
             </div>
 
             {/* Right: Info */}
@@ -323,7 +366,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   const slug = params?.id as string
-  const product = await getProductBySlug(slug)
+  const product = await getProductBySlugWithGalleries(slug)
 
   if (!product) return { notFound: true }
 

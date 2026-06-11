@@ -76,6 +76,27 @@ export default defineType({
       ],
     }),
     defineField({
+      name: 'galleries',
+      title: 'Thư viện ảnh (tối thiểu 5 ảnh)',
+      type: 'array',
+      of: [
+        {
+          type: 'image',
+          options: { hotspot: true },
+          fields: [
+            {
+              name: 'alt',
+              type: 'string',
+              title: 'Mô tả ảnh (alt text)',
+              validation: (Rule) => Rule.required(),
+            },
+          ],
+        },
+      ],
+      description: 'Thêm từ 5-10 ảnh để khách hàng có thể xem chi tiết sản phẩm từ nhiều góc độ',
+      validation: (Rule) => Rule.min(5),
+    }),
+    defineField({
       name: 'description',
       title: 'Mô tả sản phẩm',
       type: 'array',

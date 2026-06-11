@@ -15,6 +15,11 @@ export interface SanityProduct {
     alt?: string
     hotspot?: { x: number; y: number }
   }
+  galleries?: Array<{
+    asset: { _ref: string }
+    alt?: string
+    hotspot?: { x: number; y: number }
+  }>
   description?: any[]
   seoTitle?: string
   order?: number
@@ -41,12 +46,64 @@ export async function getAllProducts(): Promise<SanityProduct[]> {
   )
 }
 
+// Lấy sản phẩm bán chạy (dùng cho trang chủ)
+export async function getBestSellerProducts(limit: number = 8): Promise<SanityProduct[]> {
+  return sanityClient.fetch(
+    `*[_type == "product" && isBestSeller == true] | order(order asc, name asc) [0..${limit - 1}] {
+      _id,
+      name,
+      slug,
+      category,
+      shortDescription,
+      features,
+      isBestSeller,
+      order,
+      mainImage {
+        asset,
+        alt,
+        hotspot
+      }
+    }`
+  )
+}
+
 // Lấy tất cả slug (dùng cho getStaticPaths)
 export async function getAllProductSlugs(): Promise<{ slug: string }[]> {
   const data = await sanityClient.fetch(
     `*[_type == "product"] { "slug": slug.current }`
   )
   return data
+}
+
+// Lấy sản phẩm theo slug (include galleries)
+export async function getProductBySlugWithGalleries(slug: string): Promise<SanityProduct | null> {
+  return sanityClient.fetch(
+    `*[_type == "product" && slug.current == $slug][0] {
+      _id,
+      name,
+      slug,
+      category,
+      shortDescription,
+      features,
+      specs,
+      applications,
+      isBestSeller,
+      mainImage {
+        asset,
+        alt,
+        hotspot
+      },
+      galleries[] {
+        asset,
+        alt,
+        hotspot
+      },
+      description,
+      seoTitle,
+      order
+    }`,
+    { slug }
+  )
 }
 
 // Lấy chi tiết 1 sản phẩm theo slug

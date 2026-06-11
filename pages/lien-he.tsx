@@ -1,19 +1,71 @@
 ﻿import Layout from "../components/Layout"
-import { useState, useEffect, FormEvent } from "react"
+import { useState, useEffect, FormEvent, ChangeEvent } from "react"
 import { useRouter } from "next/router"
 
 export default function LienHePage() {
   const router = useRouter()
-  const [productName, setProductName] = useState("")
+  const [formData, setFormData] = useState({
+    fullName: "",
+    phone: "",
+    email: "",
+    position: "",
+    organization: "",
+    productInterest: "",
+    message: "",
+  })
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
 
   useEffect(() => {
-    if (router.query.product) setProductName(router.query.product as string)
+    if (router.query.product) {
+      setFormData((prev) => ({
+        ...prev,
+        productInterest: router.query.product as string,
+      }))
+    }
   }, [router.query.product])
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    const { name, value } = e.target
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setSubmitted(true)
+    setError("")
+    setLoading(true)
+
+    try {
+      const res = await fetch("/api/submit-contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || "Gửi yêu cầu thất bại")
+      }
+
+      setSubmitted(true)
+      setFormData({
+        fullName: "",
+        phone: "",
+        email: "",
+        position: "",
+        organization: "",
+        productInterest: router.query.product ? (router.query.product as string) : "",
+        message: "",
+      })
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Có lỗi xảy ra")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -123,59 +175,66 @@ export default function LienHePage() {
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid sm:grid-cols-2 gap-4">
+                <>
+                  {error && (
+                    <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
+                      {error}
+                    </div>
+                  )}
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">
+                          Họ và tên <span className="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required placeholder="Họ và tên" className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">
+                          Số điện thoại <span className="text-red-500">*</span>
+                        </label>
+                        <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required placeholder="0901 234 567" className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
+                      </div>
+                    </div>
+
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">Email</label>
+                        <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="email@example.com" className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">Chức vụ</label>
+                        <input type="text" name="position" value={formData.position} onChange={handleChange} placeholder="Giám đốc / Trưởng khoa..." className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
+                      </div>
+                    </div>
+
                     <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">
-                        Họ và tên <span className="text-red-500">*</span>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">
+                        Tên bệnh viện / Cơ sở y tế <span className="text-red-500">*</span>
                       </label>
-                      <input type="text" required placeholder="Họ và tên" className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
+                      <input type="text" name="organization" value={formData.organization} onChange={handleChange} required placeholder="Bệnh viện / Phòng khám / Trung tâm..." className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
                     </div>
+
                     <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">
-                        Số điện thoại <span className="text-red-500">*</span>
-                      </label>
-                      <input type="tel" required placeholder="0901 234 567" className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
+                      <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">Sản phẩm quan tâm</label>
+                      <input type="text" name="productInterest" value={formData.productInterest} onChange={handleChange} placeholder="Tên sản phẩm / danh mục thiết bị..." className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
                     </div>
-                  </div>
 
-                  <div className="grid sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">Email</label>
-                      <input type="email" placeholder="email@example.com" className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
+                      <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">Nội dung yêu cầu</label>
+                      <textarea rows={5} name="message" value={formData.message} onChange={handleChange} placeholder="Mô tả nhu cầu, số lượng, thông số kỹ thuật yêu cầu (nếu có)..." className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 resize-none" />
                     </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">Chức vụ</label>
-                      <input type="text" placeholder="Giám đốc / Trưởng khoa..." className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
+
+                    <div className="pt-2">
+                      <button type="submit" disabled={loading} className="w-full py-4 bg-blue-700 text-white font-semibold rounded text-base hover:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        {loading ? "Đang gửi..." : "Gửi Yêu Cầu Tư Vấn"}
+                      </button>
+                      <p className="text-sm text-slate-400 text-center mt-3">
+                        Thông tin của quý khách được bảo mật tuyệt đối. Phản hồi trong vòng 4 giờ làm việc.
+                      </p>
                     </div>
-                  </div>
-
-                  <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">
-                      Tên bệnh viện / Cơ sở y tế <span className="text-red-500">*</span>
-                    </label>
-                    <input type="text" required placeholder="Bệnh viện / Phòng khám / Trung tâm..." className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">Sản phẩm quan tâm</label>
-                    <input type="text" value={productName} onChange={(e) => setProductName(e.target.value)} placeholder="Tên sản phẩm / danh mục thiết bị..." className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">Nội dung yêu cầu</label>
-                    <textarea rows={5} placeholder="Mô tả nhu cầu, số lượng, thông số kỹ thuật yêu cầu (nếu có)..." className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 resize-none" />
-                  </div>
-
-                  <div className="pt-2">
-                    <button type="submit" className="w-full py-4 bg-blue-700 text-white font-semibold rounded text-base hover:bg-blue-800 transition-colors">
-                      Gửi Yêu Cầu Tư Vấn
-                    </button>
-                    <p className="text-sm text-slate-400 text-center mt-3">
-                      Thông tin của quý khách được bảo mật tuyệt đối. Phản hồi trong vòng 4 giờ làm việc.
-                    </p>
-                  </div>
-                </form>
+                  </form>
+                </>
               )}
             </div>
           </div>

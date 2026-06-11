@@ -1,9 +1,9 @@
-﻿import Layout from "../components/Layout"
+﻿import { GetStaticProps } from "next"
+import Layout from "../components/Layout"
 import Link from "next/link"
 import Image from "next/image"
-import { products, categories } from "../data/products"
-
-const robotProducts = products.filter((p) => p.category === "Robot Phục Hồi")
+import { getBestSellerProducts, getAllProducts, SanityProduct } from "../lib/sanity/queries"
+import { urlFor } from "../lib/sanity/image"
 
 const categoryMeta: Record<string, { icon: string; color: string }> = {
   "Robot Phuc Hoi":     { icon: "robot",    color: "bg-blue-50 text-blue-700 border-blue-200" },
@@ -18,6 +18,11 @@ const categoryMeta: Record<string, { icon: string; color: string }> = {
 }
 
 const defaultColor = "bg-blue-50 text-blue-700 border-blue-200"
+
+interface HomePageProps {
+  bestSellers: SanityProduct[]
+  allProducts: SanityProduct[]
+}
 
 function CategoryIcon({ category }: { category: string }) {
   return (
@@ -79,7 +84,7 @@ const clientLogos = [
   "BV Đại Học Y Hà Nội",
 ]
 
-export default function HomePage() {
+export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
   return (
     <Layout
       title="Mediplus – Thiết Bị Y Tế Chất Lượng Cao"
@@ -167,7 +172,7 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-            {categories.map((cat) => (
+            {Array.from(new Set(allProducts.map(p => p.category))).sort().map((cat) => (
               <Link
                 key={cat}
                 href={`/san-pham?category=${encodeURIComponent(cat)}`}
@@ -181,7 +186,7 @@ export default function HomePage() {
                 <div>
                   <p className="text-sm font-semibold text-slate-800 group-hover:text-blue-800 leading-snug">{cat}</p>
                   <p className="text-sm text-slate-400 mt-1">
-                    {products.filter((p) => p.category === cat).length} sản phẩm
+                    {allProducts.filter((p) => p.category === cat).length} sản phẩm
                   </p>
                 </div>
               </Link>
@@ -206,15 +211,14 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {robotProducts.map((product) => (
-              <div key={product.id} className="card flex flex-col overflow-hidden group">
-                {/* Product image area */}
-                <Link href={`/san-pham/${product.id}`} className="block">
+            {bestSellers.map((product) => (
+              <div key={product._id} className="card flex flex-col overflow-hidden group">
+                <Link href={`/san-pham/${product.slug.current}`} className="block">
                 <div className="h-56 bg-white border-b border-slate-200 flex items-center justify-center relative overflow-hidden">
-                  {product.image ? (
+                  {product.mainImage ? (
                     <Image
-                      src={product.image}
-                      alt={product.name}
+                      src={urlFor(product.mainImage).width(400).height(300).url()}
+                      alt={product.mainImage.alt || product.name}
                       fill
                       className="object-contain p-4 drop-shadow-sm"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
@@ -228,12 +232,12 @@ export default function HomePage() {
                 </Link>
                 <div className="p-6 flex flex-col flex-1">
                   <p className="text-sm font-semibold text-blue-700 uppercase tracking-wide mb-2">{product.category}</p>
-                  <Link href={`/san-pham/${product.id}`}>
+                  <Link href={`/san-pham/${product.slug.current}`}>
                   <h3 className="text-base font-bold text-slate-900 mb-2 leading-snug hover:text-blue-700 transition-colors">{product.name}</h3>
                   </Link>
-                  <p className="text-sm text-slate-500 flex-1 leading-relaxed line-clamp-3 mb-4">{product.description}</p>
+                  <p className="text-sm text-slate-500 flex-1 leading-relaxed line-clamp-3 mb-4">{product.shortDescription}</p>
                   <div className="border-t border-slate-100 pt-3 space-y-2 mb-4">
-                    {product.features.slice(0, 2).map((f) => (
+                    {product.features && product.features.slice(0, 2).map((f) => (
                       <div key={f} className="flex items-start gap-2">
                         <svg className="w-4 h-4 text-teal-600 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
@@ -329,4 +333,16 @@ export default function HomePage() {
       </section>
     </Layout>
   )
+}
+
+export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
+  const [bestSellers, allProducts] = await Promise.all([
+    getBestSellerProducts(8),
+    getAllProducts()
+  ])
+  
+  return {
+    props: { bestSellers, allProducts },
+    revalidate: 60,
+  }
 }

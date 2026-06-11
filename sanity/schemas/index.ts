@@ -1,3 +1,4 @@
 import product from './product'
+import contact from './contact'
 
-export const schemaTypes = [product]
+export const schemaTypes = [product, contact]
