@@ -77,7 +77,7 @@ export default defineType({
     }),
     defineField({
       name: 'galleries',
-      title: 'Thư viện ảnh (tối thiểu 5 ảnh)',
+      title: 'Thư viện ảnh (tối đa 5 ảnh)',
       type: 'array',
       of: [
         {
@@ -93,8 +93,8 @@ export default defineType({
           ],
         },
       ],
-      description: 'Thêm từ 5-10 ảnh để khách hàng có thể xem chi tiết sản phẩm từ nhiều góc độ',
-      validation: (Rule) => Rule.min(5),
+      description: 'Thêm tối đa 5 ảnh để khách hàng có thể xem chi tiết sản phẩm từ nhiều góc độ',
+      validation: (Rule) => Rule.max(5),
     }),
     defineField({
       name: 'description',
