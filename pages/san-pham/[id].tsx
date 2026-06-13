@@ -119,7 +119,7 @@ function ImageGallery({ product }: { product: SanityProduct }) {
 export default function ProductDetail({ product, related }: Props) {
   return (
     <Layout
-      title={`${product.seoTitle || product.name} | Mediplus`}
+      title={`${product.seoTitle || product.name} | RobotMediplus`}
       description={product.shortDescription || product.name}
     >
       {/* ── BREADCRUMB ───────────────────────────────────────────────────── */}
@@ -258,7 +258,7 @@ export default function ProductDetail({ product, related }: Props) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-3 text-white">Cần tư vấn thêm về {product.name}?</h2>
           <p className="text-blue-200 text-base mb-8 max-w-xl mx-auto">
-            Đội ngũ chuyên gia kỹ thuật của Mediplus sẵn sàng hỗ trợ — demo thiết bị thực tế, báo giá cạnh tranh và bảo hành chính hãng.
+            Đội ngũ chuyên gia kỹ thuật của RobotMediplus sẵn sàng hỗ trợ — demo thiết bị thực tế, báo giá cạnh tranh và bảo hành chính hãng.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link

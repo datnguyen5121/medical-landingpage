@@ -69,7 +69,7 @@ export default function LienHePage() {
   }
 
   return (
-    <Layout title="Liên Hệ – Mediplus" description="Liên hệ với Mediplus để được tư vấn thiết bị y tế">
+    <Layout title="Liên Hệ – RobotMediplus" description="Liên hệ với RobotMediplus để được tư vấn thiết bị y tế">
       {/* Hero */}
       <section className="bg-blue-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

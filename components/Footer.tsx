@@ -14,7 +14,7 @@ export default function Footer() {
               </svg>
             </div>
             <div>
-              <span className="text-base font-bold text-white tracking-tight leading-none block">MEDIPLUS</span>
+              <span className="text-base font-bold text-white tracking-tight leading-none block">ROBOTMEDI+</span>
               <span className="text-[10px] text-slate-400 leading-none tracking-wide">THIẾT BỊ Y TẾ</span>
             </div>
           </Link>
@@ -115,8 +115,8 @@ export default function Footer() {
 
       <div className="border-t border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
-          <span>© {new Date().getFullYear()} Mediplus Vietnam. Giấy phép kinh doanh số: XXXXXXXXXX</span>
-          <span>Thiết kế bởi đội ngũ Mediplus</span>
+          <span>© {new Date().getFullYear()} RobotMediplus Vietnam. Giấy phép kinh doanh số: XXXXXXXXXX</span>
+          <span>Thiết kế bởi đội ngũ RobotMediplus</span>
         </div>
       </div>
     </footer>

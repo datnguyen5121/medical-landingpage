@@ -29,7 +29,7 @@ export default function SanPhamPage({ products, categories }: Props) {
 
   return (
     <Layout
-      title="Thiết Bị Y Tế Chuyên Dụng | Máy Laser, Cabin Xông, Robot Tập, Oxy Cao Áp | Mediplus"
+      title="Thiết Bị Y Tế Chuyên Dụng | Máy Laser, Cabin Xông, Robot Tập, Oxy Cao Áp | RobotMediplus"
       description="Khám phá 300+ thiết bị y tế đạt chuẩn quốc tế: Cabin xông hơi, máy laser trị liệu, robot tập phục hồi, buồng oxy cao áp. Bảo hành chính hãng, giá cạnh tranh. Tư vấn miễn phí."
     >
       {/* Hero */}

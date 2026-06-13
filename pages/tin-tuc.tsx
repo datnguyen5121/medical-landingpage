@@ -5,16 +5,16 @@ const news = [
   {
     id: 1,
     category: 'Sản phẩm mới',
-    title: 'Mediplus ra mắt dòng Robot phục hồi chức năng thế hệ mới tích hợp AI',
-    excerpt: 'Với công nghệ trí tuệ nhân tạo tiên tiến, dòng robot mới của Mediplus mang đến hiệu quả điều trị vượt trội cho bệnh nhân phục hồi sau đột quỵ và chấn thương tủy sống.',
+    title: 'RobotMediplus ra mắt dòng Robot phục hồi chức năng thế hệ mới tích hợp AI',
+    excerpt: 'Với công nghệ trí tuệ nhân tạo tiên tiến, dòng robot mới của RobotMediplus mang đến hiệu quả điều trị vượt trội cho bệnh nhân phục hồi sau đột quỵ và chấn thương tủy sống.',
     date: '15/05/2026',
     readTime: '3 phút đọc',
   },
   {
     id: 2,
     category: 'Tin tức ngành',
-    title: 'Hội nghị thiết bị y tế Việt Nam 2026 – Mediplus tham dự và trình bày giải pháp mới',
-    excerpt: 'Tại hội nghị thường niên về thiết bị y tế Việt Nam 2026, Mediplus đã trình bày loạt giải pháp thiết bị y tế hiện đại và ký kết hợp tác với nhiều bệnh viện lớn.',
+    title: 'Hội nghị thiết bị y tế Việt Nam 2026 – RobotMediplus tham dự và trình bày giải pháp mới',
+    excerpt: 'Tại hội nghị thường niên về thiết bị y tế Việt Nam 2026, RobotMediplus đã trình bày loạt giải pháp thiết bị y tế hiện đại và ký kết hợp tác với nhiều bệnh viện lớn.',
     date: '10/05/2026',
     readTime: '5 phút đọc',
   },
@@ -22,7 +22,7 @@ const news = [
     id: 3,
     category: 'Khuyến mãi',
     title: 'Chương trình ưu đãi đặc biệt tháng 6/2026 cho các cơ sở y tế',
-    excerpt: 'Nhân dịp kỷ niệm thành lập, Mediplus triển khai chương trình ưu đãi đặc biệt với chiết khấu lên đến 20% cho các đơn hàng thiết bị vật lý trị liệu trong tháng 6.',
+    excerpt: 'Nhân dịp kỷ niệm thành lập, RobotMediplus triển khai chương trình ưu đãi đặc biệt với chiết khấu lên đến 20% cho các đơn hàng thiết bị vật lý trị liệu trong tháng 6.',
     date: '05/05/2026',
     readTime: '2 phút đọc',
   },
@@ -37,7 +37,7 @@ const news = [
   {
     id: 5,
     category: 'Đối tác',
-    title: 'Mediplus ký kết hợp tác chiến lược với Tập đoàn thiết bị y tế Hàn Quốc',
+    title: 'RobotMediplus ký kết hợp tác chiến lược với Tập đoàn thiết bị y tế Hàn Quốc',
     excerpt: 'Thỏa thuận hợp tác mới mở ra cơ hội đưa thêm 50 sản phẩm thiết bị y tế tiên tiến của Hàn Quốc vào thị trường Việt Nam trong năm 2026.',
     date: '25/04/2026',
     readTime: '4 phút đọc',
@@ -62,7 +62,7 @@ const categoryColors: Record<string, string> = {
 
 export default function TinTucPage() {
   return (
-    <Layout title="Tin Tức – Mediplus" description="Cập nhật tin tức mới nhất từ Mediplus về sản phẩm, ngành y tế và các chương trình ưu đãi">
+    <Layout title="Tin Tức – RobotMediplus" description="Cập nhật tin tức mới nhất từ RobotMediplus về sản phẩm, ngành y tế và các chương trình ưu đãi">
       {/* Hero */}
       <section className="bg-blue-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

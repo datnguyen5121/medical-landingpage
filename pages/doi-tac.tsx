@@ -43,7 +43,7 @@ const partnerTypes = [
   },
   {
     title: 'Đại lý cấp 2',
-    description: 'Phân phối tại địa phương với chiết khấu hấp dẫn và hỗ trợ đầy đủ từ Mediplus.',
+    description: 'Phân phối tại địa phương với chiết khấu hấp dẫn và hỗ trợ đầy đủ từ RobotMediplus.',
     requirement: 'Doanh số tối thiểu 200 triệu/năm',
     color: 'border-blue-400 bg-blue-50',
   },
@@ -57,13 +57,13 @@ const partnerTypes = [
 
 export default function DoiTacPage() {
   return (
-    <Layout title="Trở Thành Đối Tác – Mediplus" description="Cơ hội hợp tác phân phối thiết bị y tế cùng Mediplus">
+    <Layout title="Trở Thành Đối Tác – RobotMediplus" description="Cơ hội hợp tác phân phối thiết bị y tế cùng RobotMediplus">
       {/* Hero */}
       <section className="bg-blue-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="section-label text-blue-300 mb-2">Hợp Tác</p>
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Trở Thành Đối Tác Mediplus</h1>
-          <p className="text-blue-200 max-w-2xl">Cùng Mediplus mở rộng mạng lưới thiết bị y tế trên toàn quốc, xây dựng mối quan hệ đối tác bền vững</p>
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Trở Thành Đối Tác RobotMediplus</h1>
+          <p className="text-blue-200 max-w-2xl">Cùng RobotMediplus mở rộng mạng lưới thiết bị y tế trên toàn quốc, xây dựng mối quan hệ đối tác bền vững</p>
         </div>
       </section>
 
@@ -71,7 +71,7 @@ export default function DoiTacPage() {
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold text-gray-900">Lợi Ích Khi Hợp Tác Với Mediplus</h2>
+            <h2 className="text-3xl font-bold text-gray-900">Lợi Ích Khi Hợp Tác Với RobotMediplus</h2>
             <p className="mt-2 text-gray-500">Chúng tôi cam kết đồng hành và hỗ trợ đối tác phát triển bền vững</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

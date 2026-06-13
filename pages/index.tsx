@@ -55,7 +55,7 @@ const commitments = [
   },
   {
     title: "Thương hiệu uy tín",
-    description: "Mediplus được khẳng định vị thế trên thị trường trong nước và quốc tế, là đối tác tin cậy của 100+ cơ sở y tế.",
+    description: "RobotMediplus được khẳng định vị thế trên thị trường trong nước và quốc tế, là đối tác tin cậy của 100+ cơ sở y tế.",
     icon: (
       <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -87,7 +87,7 @@ const clientLogos = [
 export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
   return (
     <Layout
-      title="Mediplus – Thiết Bị Y Tế Chất Lượng Cao"
+      title="RobotMediplus – Thiết Bị Y Tế Chất Lượng Cao"
       description="Nhà nhập khẩu & phân phối thiết bị y tế hàng đầu Việt Nam"
     >
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
@@ -99,7 +99,7 @@ export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
               Giải Pháp Thiết Bị Y Tế <span className="text-yellow-400">Toàn Diện</span> Cho Cơ Sở Y Tế
             </h1>
             <p className="text-blue-200 text-lg leading-relaxed mb-8">
-              Mediplus – Một trong những nhà nhập khẩu &amp; phân phối thiết bị y tế hàng đầu Việt Nam. Hơn 300 sản phẩm đạt tiêu chuẩn quốc tế, phục vụ 100+ cơ sở y tế trên toàn quốc.
+              RobotMediplus – Một trong những nhà nhập khẩu &amp; phân phối thiết bị y tế hàng đầu Việt Nam. Hơn 300 sản phẩm đạt tiêu chuẩn quốc tế, phục vụ 100+ cơ sở y tế trên toàn quốc.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link href="/san-pham" className="px-6 py-3 bg-white text-blue-900 font-semibold rounded text-sm hover:bg-blue-50 transition-colors shadow">
@@ -264,7 +264,7 @@ export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mb-10">
             <p className="section-label mb-1">Cam Kết</p>
-            <h2 className="section-title">Tại Sao Chọn Mediplus?</h2>
+            <h2 className="section-title">Tại Sao Chọn RobotMediplus?</h2>
             <p className="mt-3 text-slate-600 leading-relaxed">
               Chúng tôi tự hào là một trong những nhà nhập khẩu &amp; phân phối thiết bị y tế tốt nhất Việt Nam, với cam kết mang đến giải pháp tốt nhất cho mọi cơ sở y tế.
             </p>

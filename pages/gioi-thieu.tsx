@@ -3,12 +3,12 @@ import Link from 'next/link'
 
 export default function GioiThieuPage() {
   return (
-    <Layout title="Giới Thiệu – Mediplus" description="Tìm hiểu về Mediplus – nhà nhập khẩu và phân phối thiết bị y tế hàng đầu Việt Nam">
+    <Layout title="Giới Thiệu – RobotMediplus" description="Tìm hiểu về RobotMediplus – nhà nhập khẩu và phân phối thiết bị y tế hàng đầu Việt Nam">
       {/* Hero */}
       <section className="bg-blue-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="section-label text-blue-300 mb-2">Về Chúng Tôi</p>
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Mediplus – Đối Tác Tin Cậy Của Ngành Y Tế</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">RobotMediplus – Đối Tác Tin Cậy Của Ngành Y Tế</h1>
           <p className="text-blue-200 max-w-2xl">Hơn 10 năm đồng hành cùng 100+ cơ sở y tế trên toàn quốc</p>
         </div>
       </section>
@@ -20,13 +20,13 @@ export default function GioiThieuPage() {
             <span className="text-blue-600 font-semibold uppercase tracking-wide text-sm">Câu chuyện của chúng tôi</span>
             <h2 className="mt-2 text-3xl font-bold text-gray-900 mb-4">Hơn 10 Năm Phục Vụ Ngành Y Tế</h2>
             <p className="text-gray-600 leading-relaxed mb-4">
-              Mediplus được thành lập với sứ mệnh mang những thiết bị y tế chất lượng cao, tiên tiến nhất từ các nước có nền y tế phát triển về Việt Nam, góp phần nâng cao chất lượng chăm sóc sức khỏe cho người dân.
+              RobotMediplus được thành lập với sứ mệnh mang những thiết bị y tế chất lượng cao, tiên tiến nhất từ các nước có nền y tế phát triển về Việt Nam, góp phần nâng cao chất lượng chăm sóc sức khỏe cho người dân.
             </p>
             <p className="text-gray-600 leading-relaxed mb-4">
               Trải qua hơn 10 năm phát triển, chúng tôi đã xây dựng được mạng lưới đối tác rộng khắp cả nước với hơn 500 bệnh viện, phòng khám và trung tâm phục hồi chức năng tin tưởng sử dụng sản phẩm.
             </p>
             <p className="text-gray-600 leading-relaxed">
-              Danh mục sản phẩm của Mediplus liên tục được mở rộng với hơn 300 sản phẩm từ các thương hiệu hàng đầu thế giới, đáp ứng đầy đủ nhu cầu của các cơ sở y tế từ tuyến cơ sở đến trung ương.
+              Danh mục sản phẩm của RobotMediplus liên tục được mở rộng với hơn 300 sản phẩm từ các thương hiệu hàng đầu thế giới, đáp ứng đầy đủ nhu cầu của các cơ sở y tế từ tuyến cơ sở đến trung ương.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -100,7 +100,7 @@ export default function GioiThieuPage() {
       <section className="bg-blue-900 text-white py-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <h2 className="text-2xl font-bold text-white mb-2">Hợp tác cùng Mediplus</h2>
+            <h2 className="text-2xl font-bold text-white mb-2">Hợp tác cùng RobotMediplus</h2>
             <p className="text-blue-200">Trở thành đối tác phân phối hoặc liên hệ để được tư vấn sản phẩm</p>
           </div>
           <div className="flex flex-wrap gap-3 shrink-0">
