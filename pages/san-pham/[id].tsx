@@ -32,9 +32,17 @@ function ImageGallery({ product }: { product: SanityProduct }) {
   
   const currentImage = allImages[activeImageIndex]
   
+  const handlePrevious = () => {
+    setActiveImageIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1))
+  }
+  
+  const handleNext = () => {
+    setActiveImageIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1))
+  }
+  
   return (
     <div className="space-y-3">
-      <div className="bg-white border border-slate-200 rounded-xl flex items-center justify-center h-96 relative overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-xl flex items-center justify-center h-96 relative overflow-hidden group">
         <Image
           src={urlFor(currentImage).width(800).height(800).url()}
           alt={currentImage.alt || "Sản phẩm"}
@@ -45,6 +53,30 @@ function ImageGallery({ product }: { product: SanityProduct }) {
         />
         {product.isBestSeller && (
           <span className="absolute top-4 left-4 bg-blue-700 text-white text-sm font-bold px-4 py-1.5 rounded-full">Bán chạy</span>
+        )}
+        
+        {/* Navigation Arrows */}
+        {allImages.length > 1 && (
+          <>
+            <button
+              onClick={handlePrevious}
+              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-slate-900 rounded-full p-2 transition-all opacity-0 group-hover:opacity-100 shadow-lg hover:shadow-xl z-10"
+              aria-label="Ảnh trước"
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button
+              onClick={handleNext}
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-slate-900 rounded-full p-2 transition-all opacity-0 group-hover:opacity-100 shadow-lg hover:shadow-xl z-10"
+              aria-label="Ảnh tiếp theo"
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </>
         )}
       </div>
       
@@ -197,23 +229,53 @@ export default function ProductDetail({ product, related }: Props) {
 
       {/* ── FULL DESCRIPTION ─────────────────────────────────────────────── */}
       {product.description && product.description.length > 0 && (
-        <section className="py-12 bg-white border-t border-slate-200">
+        <section className="py-12 bg-gradient-to-br from-slate-50 to-slate-100 border-t border-slate-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl">
-              <p className="section-label mb-1">Thông Tin Sản Phẩm</p>
-              <h2 className="text-2xl font-bold text-slate-900 mb-8">Mô Tả Chi Tiết</h2>
-              <div className="prose prose-slate prose-lg max-w-none
-                prose-headings:font-bold prose-headings:text-slate-900
-                prose-h2:text-xl prose-h3:text-lg
-                prose-p:text-slate-700 prose-p:leading-relaxed
-                prose-li:text-slate-700 prose-strong:text-slate-900
-                prose-ul:space-y-1">
-                <PortableText value={product.description} />
+            <div className="max-w-4xl">
+              <div className="mb-8">
+                <p className="section-label mb-1">Thông Tin Sản Phẩm</p>
+                <h2 className="text-3xl font-bold text-slate-900">Mô Tả Chi Tiết</h2>
+              </div>
+              <div className="bg-white border-2 border-slate-200 rounded-xl p-8 lg:p-10 shadow-sm hover:shadow-md transition-shadow">
+                <div className="prose prose-slate prose-lg max-w-none
+                  prose-headings:font-bold prose-headings:text-slate-900
+                  prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
+                  prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
+                  prose-p:text-slate-700 prose-p:leading-relaxed prose-p:mb-4
+                  prose-li:text-slate-700 prose-strong:text-slate-900 prose-strong:font-semibold
+                  prose-ul:space-y-2 prose-ul:mb-4 prose-ul:ml-4
+                  prose-ol:space-y-2 prose-ol:mb-4 prose-ol:ml-4">
+                  <PortableText value={product.description} />
+                </div>
               </div>
             </div>
           </div>
         </section>
       )}
+
+      {/* ── BOTTOM CTA ───────────────────────────────────────────────────── */}
+      <section className="py-14 bg-blue-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-bold mb-3 text-white">Cần tư vấn thêm về {product.name}?</h2>
+          <p className="text-blue-200 text-base mb-8 max-w-xl mx-auto">
+            Đội ngũ chuyên gia kỹ thuật của Mediplus sẵn sàng hỗ trợ — demo thiết bị thực tế, báo giá cạnh tranh và bảo hành chính hãng.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href={`/lien-he?product=${encodeURIComponent(product.name)}`}
+              className="px-8 py-4 bg-yellow-400 text-blue-900 rounded-lg font-bold text-base hover:bg-yellow-300 transition-colors"
+            >
+              Yêu Cầu Báo Giá Ngay
+            </Link>
+            <a
+              href="tel:0968348698"
+              className="px-8 py-4 bg-white/10 border border-white/30 text-white rounded-lg font-bold text-base hover:bg-white/20 transition-colors"
+            >
+              Gọi Hotline: 0968348698
+            </a>
+          </div>
+        </div>
+      </section>
 
       {/* ── SPECS TABLE ──────────────────────────────────────────────────── */}
       {product.specs && product.specs.length > 0 && (
@@ -330,30 +392,6 @@ export default function ProductDetail({ product, related }: Props) {
           </div>
         </section>
       )}
-
-      {/* ── BOTTOM CTA ───────────────────────────────────────────────────── */}
-      <section className="py-14 bg-blue-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl font-bold mb-3">Cần tư vấn thêm về {product.name}?</h2>
-          <p className="text-blue-200 text-base mb-8 max-w-xl mx-auto">
-            Đội ngũ chuyên gia kỹ thuật của Mediplus sẵn sàng hỗ trợ — demo thiết bị thực tế, báo giá cạnh tranh và bảo hành chính hãng.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href={`/lien-he?product=${encodeURIComponent(product.name)}`}
-              className="px-8 py-4 bg-yellow-400 text-blue-900 rounded-lg font-bold text-base hover:bg-yellow-300 transition-colors"
-            >
-              Yêu Cầu Báo Giá Ngay
-            </Link>
-            <a
-              href="tel:19000000"
-              className="px-8 py-4 bg-white/10 border border-white/30 text-white rounded-lg font-bold text-base hover:bg-white/20 transition-colors"
-            >
-              Gọi Hotline: 0968348698
-            </a>
-          </div>
-        </div>
-      </section>
     </Layout>
   )
 }

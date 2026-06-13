@@ -29,8 +29,8 @@ export default function SanPhamPage({ products, categories }: Props) {
 
   return (
     <Layout
-      title="Sản Phẩm – Mediplus"
-      description="Danh mục thiết bị y tế chất lượng cao của Mediplus"
+      title="Thiết Bị Y Tế Chuyên Dụng | Máy Laser, Cabin Xông, Robot Tập, Oxy Cao Áp | Mediplus"
+      description="Khám phá 300+ thiết bị y tế đạt chuẩn quốc tế: Cabin xông hơi, máy laser trị liệu, robot tập phục hồi, buồng oxy cao áp. Bảo hành chính hãng, giá cạnh tranh. Tư vấn miễn phí."
     >
       {/* Hero */}
       <section className="bg-blue-900 text-white py-12">
@@ -59,11 +59,12 @@ export default function SanPhamPage({ products, categories }: Props) {
                   const count = cat === "Tất cả"
                       ? products.length
                       : products.filter((p) => p.category === cat).length
+                  const href = cat === "Tất cả" ? "/san-pham" : `/san-pham?category=${encodeURIComponent(cat)}`
                     return (
-                      <button
+                      <Link
                         key={cat}
-                        onClick={() => setActiveCategory(cat)}
-                        className={`w-full text-left px-4 py-4 text-base transition-colors flex items-center justify-between gap-2 ${
+                        href={href}
+                        className={`block w-full text-left px-4 py-4 text-base transition-colors flex items-center justify-between gap-2 ${
                           activeCategory === cat
                             ? "bg-blue-50 text-blue-800 font-semibold border-l-2 border-blue-700"
                             : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
@@ -75,7 +76,7 @@ export default function SanPhamPage({ products, categories }: Props) {
                         }`}>
                           {count}
                         </span>
-                      </button>
+                      </Link>
                     )
                   })}
                 </div>
@@ -119,6 +120,7 @@ export default function SanPhamPage({ products, categories }: Props) {
                           fill
                           className="object-cover object-center"
                           sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                          loading="lazy"
                         />
                       ) : (
                         <svg className="w-16 h-16 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -133,21 +135,12 @@ export default function SanPhamPage({ products, categories }: Props) {
                     </div>
                     </Link>
                     <div className="p-6 flex flex-col flex-1">
-                      <p className="text-sm font-semibold text-blue-700 uppercase tracking-wide mb-2">{product.category}</p>
+                      <p className="text-xs font-bold text-blue-700 uppercase tracking-wide mb-2">{product.category}</p>
                       <Link href={`/san-pham/${product.slug.current}`}>
                       <h3 className="text-base font-bold text-slate-900 mb-2 leading-snug hover:text-blue-700 transition-colors">{product.name}</h3>
                       </Link>
-                      <p className="text-sm text-slate-500 leading-relaxed line-clamp-2 mb-3 flex-1">{product.shortDescription}</p>
-                      <div className="space-y-2 mb-4">
-                        {(product.features || []).slice(0, 3).map((f) => (
-                          <div key={f} className="flex items-start gap-2">
-                            <svg className="w-4 h-4 text-teal-600 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span className="text-sm text-slate-500">{f}</span>
-                          </div>
-                        ))}
-                      </div>
+                      <p className="text-sm text-slate-500 leading-relaxed line-clamp-2 mb-3 flex-1" title={product.shortDescription}>{product.shortDescription}</p>
+                     
                       <Link
                         href={`/lien-he?product=${encodeURIComponent(product.name)}`}
                         className="block text-center px-4 py-3 bg-blue-700 text-white rounded text-sm font-semibold hover:bg-blue-800 transition-colors"
