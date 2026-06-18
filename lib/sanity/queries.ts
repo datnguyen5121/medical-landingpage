@@ -163,3 +163,152 @@ export async function getCategories(): Promise<string[]> {
   )
   return data || []
 }
+
+// ============ ARTICLES QUERIES ============
+
+export interface SanityArticle {
+  _id: string
+  title: string
+  slug: { current: string }
+  category: string
+  excerpt: string
+  content?: any[]
+  mainImage?: {
+    asset: { _ref: string }
+    alt?: string
+    hotspot?: { x: number; y: number }
+  }
+  publishedAt: string
+  readTime: number
+  isFeatured?: boolean
+  author?: string
+  tags?: string[]
+  seoTitle?: string
+  seoDescription?: string
+  order?: number
+}
+
+// Lấy tất cả bài viết (sắp xếp theo ngày và thứ tự nổi bật)
+export async function getAllArticles(): Promise<SanityArticle[]> {
+  return sanityClient.fetch(
+    `*[_type == "article"] | order(isFeatured desc, order asc, publishedAt desc) {
+      _id,
+      title,
+      slug,
+      category,
+      excerpt,
+      publishedAt,
+      readTime,
+      isFeatured,
+      order,
+      mainImage {
+        asset,
+        alt,
+        hotspot
+      }
+    }`
+  )
+}
+
+// Lấy bài viết nổi bật (dùng làm featured article)
+export async function getFeaturedArticle(): Promise<SanityArticle | null> {
+  return sanityClient.fetch(
+    `*[_type == "article" && isFeatured == true] | order(publishedAt desc) [0] {
+      _id,
+      title,
+      slug,
+      category,
+      excerpt,
+      content,
+      publishedAt,
+      readTime,
+      isFeatured,
+      mainImage {
+        asset,
+        alt,
+        hotspot
+      }
+    }`
+  )
+}
+
+// Lấy bài viết theo danh mục
+export async function getArticlesByCategory(category: string): Promise<SanityArticle[]> {
+  return sanityClient.fetch(
+    `*[_type == "article" && category == $category] | order(publishedAt desc) {
+      _id,
+      title,
+      slug,
+      category,
+      excerpt,
+      publishedAt,
+      readTime,
+      mainImage {
+        asset,
+        alt,
+        hotspot
+      }
+    }`,
+    { category }
+  )
+}
+
+// Lấy chi tiết bài viết theo slug
+export async function getArticleBySlug(slug: string): Promise<SanityArticle | null> {
+  return sanityClient.fetch(
+    `*[_type == "article" && slug.current == $slug][0] {
+      _id,
+      title,
+      slug,
+      category,
+      excerpt,
+      content,
+      publishedAt,
+      readTime,
+      isFeatured,
+      author,
+      tags,
+      mainImage {
+        asset,
+        alt,
+        hotspot
+      },
+      seoTitle,
+      seoDescription
+    }`,
+    { slug }
+  )
+}
+
+// Lấy các bài viết liên quan (cùng danh mục, khác slug)
+export async function getRelatedArticles(
+  category: string,
+  currentSlug: string,
+  limit = 3
+): Promise<SanityArticle[]> {
+  return sanityClient.fetch(
+    `*[_type == "article" && category == $category && slug.current != $currentSlug] | order(publishedAt desc) [0...$limit] {
+      _id,
+      title,
+      slug,
+      category,
+      excerpt,
+      publishedAt,
+      readTime,
+      mainImage {
+        asset,
+        alt,
+        hotspot
+      }
+    }`,
+    { category, currentSlug, limit }
+  )
+}
+
+// Lấy tất cả slug bài viết (dùng cho getStaticPaths)
+export async function getAllArticleSlugs(): Promise<{ slug: string }[]> {
+  const data = await sanityClient.fetch(
+    `*[_type == "article"] { "slug": slug.current }`
+  )
+  return data
+}

@@ -1,56 +1,15 @@
 import Layout from '../components/Layout'
 import Link from 'next/link'
+import Image from 'next/image'
+import { getAllArticles, SanityArticle } from '../lib/sanity/queries'
+import { urlFor } from '../lib/sanity/image'
+import { format } from 'date-fns'
+import { vi } from 'date-fns/locale'
 
-const news = [
-  {
-    id: 1,
-    category: 'Sản phẩm mới',
-    title: 'RobotMediplus ra mắt dòng Robot phục hồi chức năng thế hệ mới tích hợp AI',
-    excerpt: 'Với công nghệ trí tuệ nhân tạo tiên tiến, dòng robot mới của RobotMediplus mang đến hiệu quả điều trị vượt trội cho bệnh nhân phục hồi sau đột quỵ và chấn thương tủy sống.',
-    date: '15/05/2026',
-    readTime: '3 phút đọc',
-  },
-  {
-    id: 2,
-    category: 'Tin tức ngành',
-    title: 'Hội nghị thiết bị y tế Việt Nam 2026 – RobotMediplus tham dự và trình bày giải pháp mới',
-    excerpt: 'Tại hội nghị thường niên về thiết bị y tế Việt Nam 2026, RobotMediplus đã trình bày loạt giải pháp thiết bị y tế hiện đại và ký kết hợp tác với nhiều bệnh viện lớn.',
-    date: '10/05/2026',
-    readTime: '5 phút đọc',
-  },
-  {
-    id: 3,
-    category: 'Khuyến mãi',
-    title: 'Chương trình ưu đãi đặc biệt tháng 6/2026 cho các cơ sở y tế',
-    excerpt: 'Nhân dịp kỷ niệm thành lập, RobotMediplus triển khai chương trình ưu đãi đặc biệt với chiết khấu lên đến 20% cho các đơn hàng thiết bị vật lý trị liệu trong tháng 6.',
-    date: '05/05/2026',
-    readTime: '2 phút đọc',
-  },
-  {
-    id: 4,
-    category: 'Kiến thức y tế',
-    title: 'Vai trò của thiết bị vật lý trị liệu trong phục hồi sau đột quỵ',
-    excerpt: 'Phục hồi chức năng sau đột quỵ đòi hỏi sự kết hợp giữa liệu pháp vật lý và thiết bị hỗ trợ hiện đại. Bài viết phân tích các thiết bị quan trọng nhất trong quá trình này.',
-    date: '01/05/2026',
-    readTime: '7 phút đọc',
-  },
-  {
-    id: 5,
-    category: 'Đối tác',
-    title: 'RobotMediplus ký kết hợp tác chiến lược với Tập đoàn thiết bị y tế Hàn Quốc',
-    excerpt: 'Thỏa thuận hợp tác mới mở ra cơ hội đưa thêm 50 sản phẩm thiết bị y tế tiên tiến của Hàn Quốc vào thị trường Việt Nam trong năm 2026.',
-    date: '25/04/2026',
-    readTime: '4 phút đọc',
-  },
-  {
-    id: 6,
-    category: 'Kiến thức y tế',
-    title: 'Liệu pháp oxy cao áp – Giải pháp điều trị hiệu quả cho nhiều bệnh lý',
-    excerpt: 'Buồng oxy cao áp (HBO) đang ngày càng được ứng dụng rộng rãi trong điều trị các bệnh lý từ vết thương khó lành đến chấn thương thần kinh. Tìm hiểu cơ chế và lợi ích.',
-    date: '20/04/2026',
-    readTime: '6 phút đọc',
-  },
-]
+interface TinTucPageProps {
+  articles: SanityArticle[]
+  featuredArticle: SanityArticle | null
+}
 
 const categoryColors: Record<string, string> = {
   'Sản phẩm mới': 'bg-blue-100 text-blue-700',
@@ -58,9 +17,15 @@ const categoryColors: Record<string, string> = {
   'Khuyến mãi': 'bg-orange-100 text-orange-700',
   'Kiến thức y tế': 'bg-green-100 text-green-700',
   'Đối tác': 'bg-purple-100 text-purple-700',
+  'Sự kiện': 'bg-pink-100 text-pink-700',
+  'Hướng dẫn': 'bg-indigo-100 text-indigo-700',
 }
 
-export default function TinTucPage() {
+export default function TinTucPage({ articles, featuredArticle }: TinTucPageProps) {
+  const otherArticles = featuredArticle
+    ? articles.filter(a => a._id !== featuredArticle._id)
+    : articles.slice(1)
+
   return (
     <Layout title="Tin Tức – RobotMediplus" description="Cập nhật tin tức mới nhất từ RobotMediplus về sản phẩm, ngành y tế và các chương trình ưu đãi">
       {/* Hero */}
@@ -75,55 +40,117 @@ export default function TinTucPage() {
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Featured article */}
-          <div className="mb-12">
-            <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-gray-200">
-              <div className="h-56 bg-gradient-to-br from-blue-100 to-teal-100 flex items-center justify-center">
-                <span className="text-6xl">📰</span>
-              </div>
-              <div className="p-8">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className={`text-sm font-semibold px-3 py-1 rounded-full ${categoryColors[news[0].category]}`}>
-                    {news[0].category}
-                  </span>
-                  <span className="text-sm text-gray-400">{news[0].date} · {news[0].readTime}</span>
+          {featuredArticle && (
+            <div className="mb-12">
+              <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-gray-200">
+                {featuredArticle.mainImage && (
+                  <div className="h-56 relative bg-gray-200">
+                    <Image
+                      src={urlFor(featuredArticle.mainImage).url()}
+                      alt={featuredArticle.mainImage.alt || featuredArticle.title}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                )}
+                {!featuredArticle.mainImage && (
+                  <div className="h-56 bg-gradient-to-br from-blue-100 to-teal-100 flex items-center justify-center">
+                    <span className="text-6xl">📰</span>
+                  </div>
+                )}
+                <div className="p-8">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className={`text-sm font-semibold px-3 py-1 rounded-full ${categoryColors[featuredArticle.category] || 'bg-gray-100 text-gray-700'}`}>
+                      {featuredArticle.category}
+                    </span>
+                    <span className="text-sm text-gray-400">
+                      {format(new Date(featuredArticle.publishedAt), 'dd/MM/yyyy', { locale: vi })} · {featuredArticle.readTime} phút đọc
+                    </span>
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-3">{featuredArticle.title}</h2>
+                  <p className="text-gray-600 leading-relaxed mb-4">{featuredArticle.excerpt}</p>
+                  <Link href={`/tin-tuc/${featuredArticle.slug.current}`} className="inline-flex items-center gap-1 text-blue-600 font-semibold hover:text-blue-800 transition-colors">
+                    Đọc thêm →
+                  </Link>
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-3">{news[0].title}</h2>
-                <p className="text-gray-600 leading-relaxed mb-4">{news[0].excerpt}</p>
-                <Link href="/lien-he" className="inline-flex items-center gap-1 text-blue-600 font-semibold hover:text-blue-800 transition-colors">
-                  Đọc thêm →
-                </Link>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Other articles */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {news.slice(1).map((article) => (
-              <div key={article.id} className="bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-md transition-shadow flex flex-col">
-                <div className="h-40 bg-gradient-to-br from-blue-50 to-teal-50 flex items-center justify-center">
-                  <span className="text-4xl">📄</span>
-                </div>
-                <div className="p-5 flex flex-col flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className={`text-sm font-semibold px-2.5 py-1 rounded-full ${categoryColors[article.category] ?? 'bg-gray-100 text-gray-700'}`}>
-                      {article.category}
-                    </span>
-                    <span className="text-sm text-gray-400">{article.readTime}</span>
+          {otherArticles.length > 0 && (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {otherArticles.map((article) => (
+                <div key={article._id} className="bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-md transition-shadow flex flex-col">
+                  {article.mainImage && (
+                    <div className="h-40 relative bg-gray-200">
+                      <Image
+                        src={urlFor(article.mainImage).url()}
+                        alt={article.mainImage.alt || article.title}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  )}
+                  {!article.mainImage && (
+                    <div className="h-40 bg-gradient-to-br from-blue-50 to-teal-50 flex items-center justify-center">
+                      <span className="text-4xl">📄</span>
+                    </div>
+                  )}
+                  <div className="p-5 flex flex-col flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className={`text-sm font-semibold px-2.5 py-1 rounded-full ${categoryColors[article.category] ?? 'bg-gray-100 text-gray-700'}`}>
+                        {article.category}
+                      </span>
+                      <span className="text-sm text-gray-400">{article.readTime} phút</span>
+                    </div>
+                    <h3 className="font-bold text-gray-900 mb-2 line-clamp-2">{article.title}</h3>
+                    <p className="text-sm text-gray-500 flex-1 line-clamp-3">{article.excerpt}</p>
+                    <div className="flex items-center justify-between mt-4">
+                      <span className="text-sm text-gray-400">
+                        {format(new Date(article.publishedAt), 'dd/MM/yyyy', { locale: vi })}
+                      </span>
+                      <Link href={`/tin-tuc/${article.slug.current}`} className="text-sm text-blue-600 font-semibold hover:text-blue-800 transition-colors">
+                        Đọc thêm →
+                      </Link>
+                    </div>
                   </div>
-                  <h3 className="font-bold text-gray-900 mb-2 line-clamp-2">{article.title}</h3>
-                  <p className="text-sm text-gray-500 flex-1 line-clamp-3">{article.excerpt}</p>
-                  <div className="flex items-center justify-between mt-4">
-                    <span className="text-sm text-gray-400">{article.date}</span>
-                    <Link href="/lien-he" className="text-sm text-blue-600 font-semibold hover:text-blue-800 transition-colors">
-                      Đọc thêm →
-                    </Link>
-                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
+
+          {articles.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">Chưa có bài viết nào. Vui lòng quay lại sau.</p>
+            </div>
+          )}
         </div>
       </section>
     </Layout>
   )
+}
+
+export async function getStaticProps() {
+  try {
+    const articles = await getAllArticles()
+    const featuredArticle = articles.find(a => a.isFeatured) || articles[0] || null
+
+    return {
+      props: {
+        articles,
+        featuredArticle,
+      },
+      revalidate: 60,
+    }
+  } catch (error) {
+    console.error('Error fetching articles:', error)
+    return {
+      props: {
+        articles: [],
+        featuredArticle: null,
+      },
+      revalidate: 60,
+    }
+  }
 }

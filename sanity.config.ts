@@ -25,8 +25,17 @@ export default defineConfig({
                   .defaultOrdering([{ field: 'order', direction: 'asc' }])
               ),
             S.divider(),
+            S.listItem()
+              .title('Bài Viết & Tin Tức')
+              .child(
+                S.documentList()
+                  .title('Bài Viết')
+                  .filter('_type == "article"')
+                  .defaultOrdering([{ field: 'isFeatured', direction: 'desc' }, { field: 'publishedAt', direction: 'desc' }])
+              ),
+            S.divider(),
             ...S.documentTypeListItems().filter(
-              (listItem) => !['product'].includes(listItem.getId() as string)
+              (listItem) => !['product', 'article'].includes(listItem.getId() as string)
             ),
           ]),
     }),
