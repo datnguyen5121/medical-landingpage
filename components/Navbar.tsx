@@ -27,11 +27,11 @@ export default function Navbar() {
             Thứ 2 – Thứ 7: 08:00 – 17:30
           </span>
           <div className="flex items-center gap-5 ml-auto">
-            <a href="mailto:MediWellness@gmail.com" className="hidden sm:flex items-center gap-1.5 hover:text-white transition-colors">
+            <a href="mailto:mediwellness@gmail.com" className="hidden sm:flex items-center gap-1.5 hover:text-white transition-colors">
               <svg className="w-3.5 h-3.5 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
-              MediWellness@gmail.com
+              mediwellness@gmail.com
             </a>
             <a href="tel:19000000" className="flex items-center gap-1.5 font-semibold text-white hover:text-yellow-300 transition-colors">
               <svg className="w-3.5 h-3.5 text-yellow-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
