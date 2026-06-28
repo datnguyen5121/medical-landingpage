@@ -55,7 +55,7 @@ export default function Navbar() {
             </div>
             <div>
               <span className="text-xl font-bold text-blue-900 tracking-tight leading-none block">MEDI WELLNESS</span>
-              <span className="text-xs text-slate-500 leading-none tracking-wide">THIẾT BỊ Y TẾ</span>
+              <span className="text-xs text-slate-500 leading-none tracking-wide">THIẾT BỊ Y TẾ CHẤT LƯỢNG CAO</span>
             </div>
           </Link>
 

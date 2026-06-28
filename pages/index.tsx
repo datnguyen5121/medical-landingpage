@@ -284,7 +284,7 @@ export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
       </section>
 
       {/* ── CLIENT LOGOS ─────────────────────────────────────────────────── */}
-      <section className="py-12 bg-white border-t border-slate-200">
+      {/* <section className="py-12 bg-white border-t border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm text-slate-400 font-semibold uppercase tracking-widest mb-8">
             Đối tác tiêu biểu – Tin dùng bởi các cơ sở y tế hàng đầu
@@ -301,7 +301,7 @@ export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* ── CTA BANNER ───────────────────────────────────────────────────── */}
       <section className="bg-blue-900 text-white py-14">
