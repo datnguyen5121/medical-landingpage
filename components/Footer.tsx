@@ -14,7 +14,7 @@ export default function Footer() {
               </svg>
             </div>
             <div>
-              <span className="text-base font-bold text-white tracking-tight leading-none block">ROBOTMEDI+</span>
+              <span className="text-base font-bold text-white tracking-tight leading-none block">MEDI WELLNESS</span>
               <span className="text-[10px] text-slate-400 leading-none tracking-wide">THIẾT BỊ Y TẾ</span>
             </div>
           </Link>
@@ -35,11 +35,11 @@ export default function Footer() {
               </svg>
               Hotline: 0968348698
             </a>
-            <a href="mailto:robotmediplus@gmail.com" className="flex items-center gap-2.5 hover:text-white transition-colors">
+            <a href="mailto:MediWellness@gmail.com" className="flex items-center gap-2.5 hover:text-white transition-colors">
               <svg className="w-4 h-4 text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
-              robotmediplus@gmail.com
+              MediWellness@gmail.com
             </a>
           </div>
         </div>
@@ -115,8 +115,8 @@ export default function Footer() {
 
       <div className="border-t border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
-          <span>© {new Date().getFullYear()} RobotMediplus Vietnam. Giấy phép kinh doanh số: XXXXXXXXXX</span>
-          <span>Thiết kế bởi đội ngũ RobotMediplus</span>
+          <span>© {new Date().getFullYear()} MediWellness Vietnam. Giấy phép kinh doanh số: XXXXXXXXXX</span>
+          <span>Thiết kế bởi đội ngũ MediWellness</span>
         </div>
       </div>
     </footer>

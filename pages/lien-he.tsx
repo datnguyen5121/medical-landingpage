@@ -69,7 +69,7 @@ export default function LienHePage() {
   }
 
   return (
-    <Layout title="Liên Hệ – RobotMediplus" description="Liên hệ với RobotMediplus để được tư vấn thiết bị y tế">
+    <Layout title="Liên Hệ – MediWellness" description="Liên hệ với MediWellness để được tư vấn thiết bị y tế">
       {/* Hero */}
       <section className="bg-blue-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -104,8 +104,8 @@ export default function LienHePage() {
                   {
                     icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />,
                     label: "Email",
-                    value: "robotmediplus@gmail.com",
-                    href: "mailto:robotmediplus@gmail.com",
+                    value: "MediWellness@gmail.com",
+                    href: "mailto:MediWellness@gmail.com",
                   },
                   {
                     icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />,

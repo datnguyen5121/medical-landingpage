@@ -27,7 +27,7 @@ export default function TinTucPage({ articles, featuredArticle }: TinTucPageProp
     : articles.slice(1)
 
   return (
-    <Layout title="Tin Tức – RobotMediplus" description="Cập nhật tin tức mới nhất từ RobotMediplus về sản phẩm, ngành y tế và các chương trình ưu đãi">
+    <Layout title="Tin Tức – MediWellness" description="Cập nhật tin tức mới nhất từ MediWellness về sản phẩm, ngành y tế và các chương trình ưu đãi">
       {/* Hero */}
       <section className="bg-blue-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

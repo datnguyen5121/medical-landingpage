@@ -10,7 +10,7 @@ interface LayoutProps {
   description?: string
 }
 
-export default function Layout({ children, title = 'RobotMediplus – Thiết Bị Y Tế', description = 'Nhà nhập khẩu & phân phối thiết bị y tế hàng đầu Việt Nam' }: LayoutProps) {
+export default function Layout({ children, title = 'MediWellness – Thiết Bị Y Tế', description = 'Nhà nhập khẩu & phân phối thiết bị y tế hàng đầu Việt Nam' }: LayoutProps) {
   return (
     <>
       <Head>
