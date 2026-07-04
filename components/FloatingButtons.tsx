@@ -1,6 +1,7 @@
 'use client'
 import Image from 'next/image'
 import { useState } from 'react'
+import { trackQuoteConversion } from '../lib/gtag'
 
 export default function FloatingButtons() {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
@@ -51,7 +52,11 @@ export default function FloatingButtons() {
     },
   ]
 
-  const handleClick = (href: string, target?: string) => {
+  const handleClick = (href: string, target?: string, buttonId?: string) => {
+    if (buttonId === 'zalo') {
+      trackQuoteConversion()
+    }
+
     if (target === '_blank') {
       window.open(href, '_blank', 'noopener,noreferrer')
     } else if (href.startsWith('tel:')) {
@@ -72,7 +77,7 @@ export default function FloatingButtons() {
         >
           {/* Button */}
           <button
-            onClick={() => handleClick(btn.href, btn.target)}
+            onClick={() => handleClick(btn.href, btn.target, btn.id)}
             className={`${btn.bgColor} text-white ${btn.useImage ? '' : 'p-4'} rounded-full shadow-lg flex items-center justify-center cursor-pointer relative`}
             aria-label={btn.label}
             type="button"

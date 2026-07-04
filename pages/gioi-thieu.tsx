@@ -1,3 +1,4 @@
+import { trackQuoteConversion } from '@/lib/gtag'
 import Layout from '../components/Layout'
 import Link from 'next/link'
 
@@ -107,7 +108,7 @@ export default function GioiThieuPage() {
             <Link href="/doi-tac" className="px-6 py-3 bg-white text-blue-900 font-semibold rounded text-sm hover:bg-blue-50 transition-colors">
               Trở Thành Đối Tác
             </Link>
-            <Link href="/lien-he" className="px-6 py-3 border border-blue-500 text-white font-semibold rounded text-sm hover:bg-blue-800 transition-colors">
+            <Link href="/lien-he" onClick={trackQuoteConversion} className="px-6 py-3 border border-blue-500 text-white font-semibold rounded text-sm hover:bg-blue-800 transition-colors">
               Yêu Cầu Báo Giá
             </Link>
           </div>

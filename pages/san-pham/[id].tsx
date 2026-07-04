@@ -4,6 +4,7 @@ import Image from "next/image"
 import { useState } from "react"
 import { PortableText } from "@portabletext/react"
 import Layout from "../../components/Layout"
+import { trackQuoteConversion } from "../../lib/gtag"
 import { getAllProductSlugs, getProductBySlugWithGalleries, getRelatedProducts, SanityProduct } from "../../lib/sanity/queries"
 import { urlFor } from "../../lib/sanity/image"
 
@@ -195,12 +196,14 @@ export default function ProductDetail({ product, related }: Props) {
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link
                   href={`/lien-he?product=${encodeURIComponent(product.name)}`}
+                  onClick={trackQuoteConversion}
                   className="flex-1 text-center py-4 bg-blue-700 text-white rounded-lg text-base font-bold hover:bg-blue-800 transition-colors"
                 >
                   Yêu Cầu Báo Giá
                 </Link>
                 <Link
-                  href={`/lien-he?product=${encodeURIComponent(product.name)}`}
+                  href={`https://zalo.me/0968348698`}
+                  onClick={trackQuoteConversion}
                   className="flex-1 text-center py-4 border-2 border-blue-700 text-blue-700 rounded-lg text-base font-bold hover:bg-blue-50 transition-colors"
                 >
                   Liên Hệ Tư Vấn
@@ -263,6 +266,7 @@ export default function ProductDetail({ product, related }: Props) {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href={`/lien-he?product=${encodeURIComponent(product.name)}`}
+              onClick={trackQuoteConversion}
               className="px-8 py-4 bg-yellow-400 text-blue-900 rounded-lg font-bold text-base hover:bg-yellow-300 transition-colors"
             >
               Yêu Cầu Báo Giá Ngay

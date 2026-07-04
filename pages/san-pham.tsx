@@ -1,5 +1,6 @@
 ﻿import { GetStaticProps } from "next"
 import Layout from "../components/Layout"
+import { trackQuoteConversion } from "../lib/gtag"
 import Link from "next/link"
 import Image from "next/image"
 import { getAllProducts, getCategories, SanityProduct } from "../lib/sanity/queries"
@@ -143,6 +144,7 @@ export default function SanPhamPage({ products, categories }: Props) {
                      
                       <Link
                         href={`/lien-he?product=${encodeURIComponent(product.name)}`}
+                        onClick={trackQuoteConversion}
                         className="block text-center px-4 py-3 bg-blue-700 text-white rounded text-sm font-semibold hover:bg-blue-800 transition-colors"
                       >
                         Liên Hệ &amp; Yêu Cầu Báo Giá

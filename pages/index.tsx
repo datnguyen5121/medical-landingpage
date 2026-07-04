@@ -2,6 +2,7 @@
 import Layout from "../components/Layout"
 import Link from "next/link"
 import Image from "next/image"
+import { trackQuoteConversion } from "../lib/gtag"
 import { getBestSellerProducts, getAllProducts, SanityProduct } from "../lib/sanity/queries"
 import { urlFor } from "../lib/sanity/image"
 
@@ -105,7 +106,7 @@ export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
               <Link href="/san-pham" className="px-6 py-3 bg-white text-blue-900 font-semibold rounded text-sm hover:bg-blue-50 transition-colors shadow">
                 Xem Danh Mục Sản Phẩm
               </Link>
-              <Link href="/lien-he" className="px-6 py-3 border border-blue-400 text-white font-semibold rounded text-sm hover:bg-blue-800 transition-colors">
+              <Link href="/lien-he" onClick={trackQuoteConversion} className="px-6 py-3 border border-blue-400 text-white font-semibold rounded text-sm hover:bg-blue-800 transition-colors">
                 Yêu Cầu Báo Giá
               </Link>
             </div>
@@ -248,6 +249,7 @@ export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
                   </div>
                   <Link
                     href={`/lien-he?product=${encodeURIComponent(product.name)}`}
+                    onClick={trackQuoteConversion}
                     className="block text-center px-4 py-3 bg-blue-700 text-white rounded text-sm font-semibold hover:bg-blue-800 transition-colors"
                   >
                     Liên Hệ Tư Vấn &amp; Báo Giá
@@ -324,6 +326,7 @@ export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
             </a>
             <Link
               href="/lien-he"
+              onClick={trackQuoteConversion}
               className="px-6 py-3 border border-blue-500 text-white font-semibold rounded text-sm hover:bg-blue-800 transition-colors"
             >
               Gửi Yêu Cầu Báo Giá

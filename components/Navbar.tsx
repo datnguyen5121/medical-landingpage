@@ -1,6 +1,7 @@
 ﻿import Link from "next/link"
 import { useRouter } from "next/router"
 import { useState } from "react"
+import { trackQuoteConversion } from "../lib/gtag"
 
 const navLinks = [
   { href: "/", label: "Trang Chủ" },
@@ -79,6 +80,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             <Link
               href="/lien-he"
+              onClick={trackQuoteConversion}
               className="px-6 py-3 bg-blue-700 text-white rounded text-base font-semibold hover:bg-blue-800 transition-colors"
             >
               Yêu Cầu Báo Giá
@@ -123,7 +125,10 @@ export default function Navbar() {
           ))}
           <Link
             href="/lien-he"
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              setOpen(false)
+              trackQuoteConversion()
+            }}
             className="block mt-3 px-5 py-2.5 bg-blue-700 text-white rounded text-sm font-semibold text-center hover:bg-blue-800 transition-colors"
           >
             Yêu Cầu Báo Giá
