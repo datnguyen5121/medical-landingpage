@@ -10,6 +10,7 @@ export default function LienHePage() {
     email: "",
     position: "",
     organization: "",
+    quantity: "",
     productInterest: "",
     message: "",
   })
@@ -58,6 +59,7 @@ export default function LienHePage() {
         email: "",
         position: "",
         organization: "",
+        quantity: "",
         productInterest: router.query.product ? (router.query.product as string) : "",
         message: "",
       })
@@ -208,11 +210,19 @@ export default function LienHePage() {
                       </div>
                     </div>
 
-                    <div>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">
-                        Tên bệnh viện / Cơ sở y tế <span className="text-red-500">*</span>
-                      </label>
-                      <input type="text" name="organization" value={formData.organization} onChange={handleChange} required placeholder="Bệnh viện / Phòng khám / Trung tâm..." className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
+                          Địa chỉ bệnh viện / Cơ sở y tế / Phòng khám / Spa <span className="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="organization" value={formData.organization} onChange={handleChange} required placeholder="Số nhà, đường, quận/huyện, tỉnh/thành..." className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">
+                          Số lượng máy cần mua <span className="text-red-500">*</span>
+                        </label>
+                        <input type="number" name="quantity" value={formData.quantity} onChange={handleChange} required min="1" placeholder="1" className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
+                      </div>
                     </div>
 
                     <div>

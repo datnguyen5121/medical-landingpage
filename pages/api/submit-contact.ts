@@ -7,6 +7,7 @@ interface ContactData {
   email?: string
   position?: string
   organization: string
+  quantity?: string | number
   productInterest?: string
   message?: string
 }
@@ -26,10 +27,12 @@ export default async function handler(
   }
 
   try {
-    const { fullName, phone, email, position, organization, productInterest, message }: ContactData = req.body
+    const { fullName, phone, email, position, organization, quantity, productInterest, message }: ContactData = req.body
+
+    const normalizedQuantity = typeof quantity === 'number' ? quantity : Number(quantity?.toString().trim())
 
     // Validate required fields
-    if (!fullName || !phone || !organization) {
+    if (!fullName || !phone || !organization || !Number.isFinite(normalizedQuantity) || normalizedQuantity < 1) {
       return res.status(400).json({ error: 'Missing required fields' })
     }
 
@@ -50,6 +53,7 @@ export default async function handler(
       email: email?.trim() || null,
       position: position?.trim() || null,
       organization: organization.trim(),
+      quantity: normalizedQuantity,
       productInterest: productInterest?.trim() || null,
       message: message?.trim() || null,
       submittedAt: new Date().toISOString(),

@@ -30,9 +30,15 @@ export default defineType({
     }),
     defineField({
       name: 'organization',
-      title: 'Tên bệnh viện / Cơ sở y tế',
+      title: 'Địa chỉ bệnh viện / Cơ sở y tế / Phòng khám / Spa',
       type: 'string',
       validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'quantity',
+      title: 'Số lượng máy cần mua',
+      type: 'number',
+      validation: (Rule) => Rule.required().min(1),
     }),
     defineField({
       name: 'productInterest',
