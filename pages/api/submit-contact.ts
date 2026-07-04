@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { sanityClient } from '../../lib/sanity/client'
+import { sanityServerClient } from '../../lib/sanity/client'
 
 interface ContactData {
   fullName: string
@@ -33,8 +33,15 @@ export default async function handler(
       return res.status(400).json({ error: 'Missing required fields' })
     }
 
+    if (!process.env.SANITY_API_TOKEN && !process.env.SANITY_WRITE_TOKEN) {
+      console.error('Missing Sanity write token for contact submission')
+      return res.status(500).json({
+        error: 'Cấu hình Sanity chưa sẵn sàng để lưu yêu cầu. Vui lòng liên hệ quản trị viên.',
+      })
+    }
+
     // Create document in Sanity
-    const doc = await sanityClient.create({
+    await sanityServerClient.create({
       _type: 'contact',
       fullName: fullName.trim(),
       phone: phone.trim(),
