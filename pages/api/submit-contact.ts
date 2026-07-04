@@ -60,8 +60,18 @@ export default async function handler(
       success: true,
       message: 'Yêu cầu của bạn đã được gửi thành công!',
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Contact form error:', error)
+
+    const errorMessage = error?.body?.error?.description || error?.responseBody || error?.message || ''
+    const isPermissionError = /insufficient permissions|permission "create" required/i.test(errorMessage)
+
+    if (isPermissionError) {
+      return res.status(403).json({
+        error: 'Token Sanity hiện không có quyền tạo dữ liệu trên dataset này. Vui lòng cấp quyền Editor hoặc Administrator cho token.',
+      })
+    }
+
     return res.status(500).json({
       error: 'Có lỗi xảy ra. Vui lòng thử lại sau.',
     })
