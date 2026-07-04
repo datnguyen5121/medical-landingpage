@@ -34,6 +34,8 @@ export default async function handler(
     }
 
     if (!process.env.SANITY_API_TOKEN && !process.env.SANITY_WRITE_TOKEN) {
+      console.log('process.env.SANITY_API_TOKEN ',process.env.SANITY_API_TOKEN)
+      console.log('process.env.SANITY_WRITE_TOKEN ',process.env.SANITY_WRITE_TOKEN)
       console.error('Missing Sanity write token for contact submission')
       return res.status(500).json({
         error: 'Cấu hình Sanity chưa sẵn sàng để lưu yêu cầu. Vui lòng liên hệ quản trị viên.',
