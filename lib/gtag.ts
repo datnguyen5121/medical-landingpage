@@ -1,11 +1,12 @@
 export const trackQuoteConversion = () => {
   if (typeof window === 'undefined') return
 
-  const gtag = (window as Window & typeof globalThis & { gtag?: (...args: unknown[]) => void }).gtag
+  const dataLayer = (window as Window & typeof globalThis & { dataLayer?: unknown[] }).dataLayer
 
-  if (typeof gtag === 'function') {
-    gtag('event', 'conversion', {
-      send_to: 'AW-18294272736/6Qc0CJSxmsocEODlsZNE',
+  if (Array.isArray(dataLayer)) {
+    dataLayer.push({
+      event: 'quote_conversion',
+      conversion_type: 'quote_request',
     })
   }
 }
