@@ -2,13 +2,14 @@ import { defineConfig } from 'sanity'
 import { structureTool } from 'sanity/structure'
 import { visionTool } from '@sanity/vision'
 import { schemaTypes } from './sanity/schemas'
+import { projectId, dataset } from './lib/sanity/env'
 
 export default defineConfig({
-  name: 'mediplus',
+  name: 'mediwellness',
   title: 'MediWellness – Quản lý nội dung',
 
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
+  projectId,
+  dataset,
 
   plugins: [
     structureTool({

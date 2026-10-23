@@ -1,38 +1,15 @@
-﻿import { GetStaticProps } from "next"
+import { GetStaticProps } from "next"
 import Layout from "../components/Layout"
 import Link from "next/link"
 import Image from "next/image"
 import { trackQuoteConversion } from "../lib/gtag"
 import { getBestSellerProducts, getAllProducts, SanityProduct } from "../lib/sanity/queries"
 import { urlFor } from "../lib/sanity/image"
-
-const categoryMeta: Record<string, { icon: string; color: string }> = {
-  "Robot Phuc Hoi":     { icon: "robot",    color: "bg-blue-50 text-blue-700 border-blue-200" },
-  "Vat Ly Tri Lieu":    { icon: "bolt",     color: "bg-indigo-50 text-indigo-700 border-indigo-200" },
-  "Thai Doc & Oxy":     { icon: "droplet",  color: "bg-teal-50 text-teal-700 border-teal-200" },
-  "Ho Hap":             { icon: "wind",     color: "bg-sky-50 text-sky-700 border-sky-200" },
-  "Cot Song":           { icon: "bone",     color: "bg-orange-50 text-orange-700 border-orange-200" },
-  "Chan Doan":          { icon: "chart",    color: "bg-purple-50 text-purple-700 border-purple-200" },
-  "Phuc Hoi Ngon Ngu":  { icon: "speech",   color: "bg-pink-50 text-pink-700 border-pink-200" },
-  "Nhiet Tri Lieu":     { icon: "fire",     color: "bg-red-50 text-red-700 border-red-200" },
-  "Phau Thuat & Can Thiep": { icon: "tool", color: "bg-slate-50 text-slate-700 border-slate-200" },
-}
-
-const defaultColor = "bg-blue-50 text-blue-700 border-blue-200"
+import { HOTLINE_TEL } from "../lib/config"
 
 interface HomePageProps {
   bestSellers: SanityProduct[]
   allProducts: SanityProduct[]
-}
-
-function CategoryIcon({ category }: { category: string }) {
-  return (
-    <div className="w-10 h-10 rounded bg-blue-800 flex items-center justify-center shrink-0">
-      <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" />
-      </svg>
-    </div>
-  )
 }
 
 const commitments = [
@@ -316,7 +293,7 @@ export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
           </div>
           <div className="flex flex-wrap gap-3 shrink-0">
             <a
-              href="tel:19000000"
+              href={HOTLINE_TEL}
               className="flex items-center gap-2 px-6 py-3 bg-yellow-400 text-blue-900 font-bold rounded text-sm hover:bg-yellow-300 transition-colors"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -339,13 +316,18 @@ export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
 }
 
 export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
-  const [bestSellers, allProducts] = await Promise.all([
-    getBestSellerProducts(8),
-    getAllProducts()
-  ])
-  
-  return {
-    props: { bestSellers, allProducts },
-    revalidate: 60,
+  try {
+    const [bestSellers, allProducts] = await Promise.all([
+      getBestSellerProducts(8),
+      getAllProducts()
+    ])
+
+    return {
+      props: { bestSellers, allProducts },
+      revalidate: 60,
+    }
+  } catch (error) {
+    console.error('Error fetching home page data:', error)
+    return { props: { bestSellers: [], allProducts: [] }, revalidate: 10 }
   }
 }

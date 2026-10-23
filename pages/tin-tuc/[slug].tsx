@@ -5,7 +5,8 @@ import { getArticleBySlug, getAllArticleSlugs, getRelatedArticles, SanityArticle
 import { urlFor } from '../../lib/sanity/image'
 import { format } from 'date-fns'
 import { vi } from 'date-fns/locale'
-import { PortableText } from '@portabletext/react'
+import type { GetStaticProps } from 'next'
+import { PortableText, type PortableTextComponents } from '@portabletext/react'
 
 interface ArticlePageProps {
   article: SanityArticle
@@ -22,9 +23,9 @@ const categoryColors: Record<string, string> = {
   'Hướng dẫn': 'bg-indigo-100 text-indigo-700',
 }
 
-const components = {
+const components: PortableTextComponents = {
   types: {
-    image: ({ value }: any) => (
+    image: ({ value }) => (
       <div className="relative w-full h-96 my-6 rounded-lg overflow-hidden">
         <Image
           src={urlFor(value).url()}
@@ -36,24 +37,38 @@ const components = {
     ),
   },
   block: {
-    h1: ({ children }: any) => <h1 className="text-4xl font-bold my-4 text-gray-900">{children}</h1>,
-    h2: ({ children }: any) => <h2 className="text-3xl font-bold my-3 text-gray-900">{children}</h2>,
-    h3: ({ children }: any) => <h3 className="text-2xl font-bold my-3 text-gray-900">{children}</h3>,
-    normal: ({ children }: any) => <p className="text-gray-700 my-3 leading-relaxed">{children}</p>,
+    h1: ({ children }) => <h1 className="text-4xl font-bold my-4 text-gray-900">{children}</h1>,
+    h2: ({ children }) => <h2 className="text-3xl font-bold my-3 text-gray-900">{children}</h2>,
+    h3: ({ children }) => <h3 className="text-2xl font-bold my-3 text-gray-900">{children}</h3>,
+    normal: ({ children }) => <p className="text-gray-700 my-3 leading-relaxed">{children}</p>,
   },
   list: {
-    bullet: ({ children }: any) => <ul className="list-disc list-inside my-3 text-gray-700 space-y-1">{children}</ul>,
-    number: ({ children }: any) => <ol className="list-decimal list-inside my-3 text-gray-700 space-y-1">{children}</ol>,
+    bullet: ({ children }) => <ul className="list-disc list-inside my-3 text-gray-700 space-y-1">{children}</ul>,
+    number: ({ children }) => <ol className="list-decimal list-inside my-3 text-gray-700 space-y-1">{children}</ol>,
   },
   listItem: {
-    bullet: ({ children }: any) => <li className="ml-2">{children}</li>,
-    number: ({ children }: any) => <li className="ml-2">{children}</li>,
+    bullet: ({ children }) => <li className="ml-2">{children}</li>,
+    number: ({ children }) => <li className="ml-2">{children}</li>,
   },
 }
 
 export default function ArticlePage({ article, relatedArticles }: ArticlePageProps) {
+  const imageUrl = article.mainImage ? urlFor(article.mainImage).width(1200).url() : undefined
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: article.seoTitle || article.title,
+    description: article.seoDescription || article.excerpt,
+    datePublished: article.publishedAt,
+    ...(article.author && { author: { '@type': 'Person', name: article.author } }),
+    ...(imageUrl && { image: imageUrl }),
+  }
+
   return (
     <Layout
+      ogType="article"
+      image={imageUrl}
+      jsonLd={jsonLd}
       title={article.seoTitle || article.title}
       description={article.seoDescription || article.excerpt}
     >
@@ -196,7 +211,8 @@ export async function getStaticPaths() {
   }
 }
 
-export async function getStaticProps({ params }: { params: { slug: string } }) {
+export const getStaticProps: GetStaticProps<ArticlePageProps, { slug: string }> = async ({ params }) => {
+  if (!params) return { notFound: true }
   try {
     const article = await getArticleBySlug(params.slug)
 

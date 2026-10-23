@@ -1,20 +1,19 @@
 import { createClient } from '@sanity/client'
-
-const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || process.env.SANITY_PROJECT_ID || 'lgmpvqki'
-const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || process.env.SANITY_DATASET || 'production'
+import { projectId, dataset, apiVersion, writeToken } from './env'
 
 export const sanityClient = createClient({
   projectId,
   dataset,
-  apiVersion: '2024-01-01',
+  apiVersion,
   useCdn: true,
 })
 
+// Chỉ import từ API route (server). Không import trong code chạy ở trình duyệt.
 export const sanityServerClient = createClient({
   projectId,
   dataset,
-  apiVersion: '2024-01-01',
+  apiVersion,
   useCdn: false,
-  token: process.env.SANITY_API_TOKEN || process.env.SANITY_WRITE_TOKEN,
+  token: writeToken,
   ignoreBrowserTokenWarning: true,
 })

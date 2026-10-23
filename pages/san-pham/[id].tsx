@@ -7,6 +7,7 @@ import Layout from "../../components/Layout"
 import { trackQuoteConversion } from "../../lib/gtag"
 import { getAllProductSlugs, getProductBySlugWithGalleries, getRelatedProducts, SanityProduct } from "../../lib/sanity/queries"
 import { urlFor } from "../../lib/sanity/image"
+import { HOTLINE_TEL, ZALO_URL, SITE_NAME } from "../../lib/config"
 
 interface Props {
   product: SanityProduct
@@ -118,10 +119,23 @@ function ImageGallery({ product }: { product: SanityProduct }) {
 }
 
 export default function ProductDetail({ product, related }: Props) {
+  const imageUrl = product.mainImage ? urlFor(product.mainImage).width(1200).url() : undefined
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.shortDescription || product.name,
+    category: product.category,
+    ...(imageUrl && { image: imageUrl }),
+    brand: { '@type': 'Brand', name: SITE_NAME },
+  }
+
   return (
     <Layout
       title={`${product.seoTitle || product.name} | MediWellness`}
       description={product.shortDescription || product.name}
+      image={imageUrl}
+      jsonLd={jsonLd}
     >
       {/* ── BREADCRUMB ───────────────────────────────────────────────────── */}
       <div className="bg-slate-50 border-b border-slate-200">
@@ -202,7 +216,7 @@ export default function ProductDetail({ product, related }: Props) {
                   Yêu Cầu Báo Giá
                 </Link>
                 <Link
-                  href={`https://zalo.me/0968348698`}
+                  href={ZALO_URL}
                   onClick={trackQuoteConversion}
                   className="flex-1 text-center py-4 border-2 border-blue-700 text-blue-700 rounded-lg text-base font-bold hover:bg-blue-50 transition-colors"
                 >
@@ -214,7 +228,7 @@ export default function ProductDetail({ product, related }: Props) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                     d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span>Bạn cần tư vấn về sản phẩm hoặc cần tìm hiểu chính sách dành cho đại lý? Vui lòng gọi trực tiếp cho chúng tôi qua Hotline <a href="tel:0968348698" className="font-bold text-blue-700 hover:underline">0968348698</a> hoặc liên hệ qua Messenger</span>
+                <span>Bạn cần tư vấn về sản phẩm hoặc cần tìm hiểu chính sách dành cho đại lý? Vui lòng gọi trực tiếp cho chúng tôi qua Hotline <a href={HOTLINE_TEL} className="font-bold text-blue-700 hover:underline">0968348698</a> hoặc liên hệ qua Messenger</span>
               </div>
               {/* Support note */}
               <div className="mt-5 flex items-center gap-2 text-sm text-slate-500 bg-slate-50 rounded-lg px-4 py-3 border border-slate-200">
@@ -223,7 +237,7 @@ export default function ProductDetail({ product, related }: Props) {
                     d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
                 Nhân viên sẽ gọi điện tư vấn cụ thể
-                — Hotline: <a href="tel:0968348698" className="font-bold text-blue-700 ml-1 hover:underline">0968348698</a>
+                — Hotline: <a href={HOTLINE_TEL} className="font-bold text-blue-700 ml-1 hover:underline">0968348698</a>
               </div>
             </div>
           </div>
@@ -272,7 +286,7 @@ export default function ProductDetail({ product, related }: Props) {
               Yêu Cầu Báo Giá Ngay
             </Link>
             <a
-              href="tel:0968348698"
+              href={HOTLINE_TEL}
               className="px-8 py-4 bg-white/10 border border-white/30 text-white rounded-lg font-bold text-base hover:bg-white/20 transition-colors"
             >
               Gọi Hotline: 0968348698
@@ -401,21 +415,31 @@ export default function ProductDetail({ product, related }: Props) {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const slugs = await getAllProductSlugs()
-  const paths = slugs.map((s) => ({ params: { id: s.slug } }))
-  return { paths, fallback: 'blocking' }
+  try {
+    const slugs = await getAllProductSlugs()
+    const paths = slugs.map((s) => ({ params: { id: s.slug } }))
+    return { paths, fallback: 'blocking' }
+  } catch (error) {
+    console.error('Error fetching product slugs:', error)
+    return { paths: [], fallback: 'blocking' }
+  }
 }
 
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   const slug = params?.id as string
-  const product = await getProductBySlugWithGalleries(slug)
+  try {
+    const product = await getProductBySlugWithGalleries(slug)
 
-  if (!product) return { notFound: true }
+    if (!product) return { notFound: true }
 
-  const related = await getRelatedProducts(product.category, slug, 3)
+    const related = await getRelatedProducts(product.category, slug, 3)
 
-  return {
-    props: { product, related },
-    revalidate: 60,
+    return {
+      props: { product, related },
+      revalidate: 60,
+    }
+  } catch (error) {
+    console.error('Error fetching product:', error)
+    return { notFound: true, revalidate: 10 }
   }
 }

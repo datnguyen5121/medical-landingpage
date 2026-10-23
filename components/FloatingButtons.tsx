@@ -2,6 +2,7 @@
 import Image from 'next/image'
 import { useState } from 'react'
 import { trackQuoteConversion } from '../lib/gtag'
+import { HOTLINE_TEL, ZALO_URL } from '../lib/config'
 
 export default function FloatingButtons() {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
@@ -15,14 +16,14 @@ export default function FloatingButtons() {
         </svg>
       ),
       bgColor: 'bg-red-500',
-      href: 'tel:0968348698',
+      href: HOTLINE_TEL,
       label: 'Gọi ngay',
     },
     {
       id: 'zalo',
       icon: null,
       bgColor: 'bg-blue-500',
-      href: 'https://zalo.me/0968348698',
+      href: ZALO_URL,
       label: 'Zalo',
       target: '_blank',
       useImage: true,

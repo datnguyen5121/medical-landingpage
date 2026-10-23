@@ -1,4 +1,11 @@
+import type { PortableTextBlock } from '@portabletext/types'
 import { sanityClient } from './client'
+
+export interface SanityImage {
+  asset: { _ref: string }
+  alt?: string
+  hotspot?: { x: number; y: number }
+}
 
 export interface SanityProduct {
   _id: string
@@ -10,161 +17,12 @@ export interface SanityProduct {
   specs?: { label: string; value: string }[]
   applications?: string[]
   isBestSeller?: boolean
-  mainImage?: {
-    asset: { _ref: string }
-    alt?: string
-    hotspot?: { x: number; y: number }
-  }
-  galleries?: Array<{
-    asset: { _ref: string }
-    alt?: string
-    hotspot?: { x: number; y: number }
-  }>
-  description?: any[]
+  mainImage?: SanityImage
+  galleries?: SanityImage[]
+  description?: PortableTextBlock[]
   seoTitle?: string
   order?: number
 }
-
-// Lấy tất cả sản phẩm (dùng cho trang danh sách)
-export async function getAllProducts(): Promise<SanityProduct[]> {
-  return sanityClient.fetch(
-    `*[_type == "product"] | order(order asc, name asc) {
-      _id,
-      name,
-      slug,
-      category,
-      shortDescription,
-      features,
-      isBestSeller,
-      order,
-      mainImage {
-        asset,
-        alt,
-        hotspot
-      }
-    }`
-  )
-}
-
-// Lấy sản phẩm bán chạy (dùng cho trang chủ)
-export async function getBestSellerProducts(limit: number = 8): Promise<SanityProduct[]> {
-  return sanityClient.fetch(
-    `*[_type == "product" && isBestSeller == true] | order(order asc, name asc) [0..${limit - 1}] {
-      _id,
-      name,
-      slug,
-      category,
-      shortDescription,
-      features,
-      isBestSeller,
-      order,
-      mainImage {
-        asset,
-        alt,
-        hotspot
-      }
-    }`
-  )
-}
-
-// Lấy tất cả slug (dùng cho getStaticPaths)
-export async function getAllProductSlugs(): Promise<{ slug: string }[]> {
-  const data = await sanityClient.fetch(
-    `*[_type == "product"] { "slug": slug.current }`
-  )
-  return data
-}
-
-// Lấy sản phẩm theo slug (include galleries)
-export async function getProductBySlugWithGalleries(slug: string): Promise<SanityProduct | null> {
-  return sanityClient.fetch(
-    `*[_type == "product" && slug.current == $slug][0] {
-      _id,
-      name,
-      slug,
-      category,
-      shortDescription,
-      features,
-      specs,
-      applications,
-      isBestSeller,
-      mainImage {
-        asset,
-        alt,
-        hotspot
-      },
-      galleries[] {
-        asset,
-        alt,
-        hotspot
-      },
-      description,
-      seoTitle,
-      order
-    }`,
-    { slug }
-  )
-}
-
-// Lấy chi tiết 1 sản phẩm theo slug
-export async function getProductBySlug(slug: string): Promise<SanityProduct | null> {
-  const data = await sanityClient.fetch(
-    `*[_type == "product" && slug.current == $slug][0] {
-      _id,
-      name,
-      slug,
-      category,
-      shortDescription,
-      description,
-      features,
-      specs,
-      applications,
-      isBestSeller,
-      seoTitle,
-      mainImage {
-        asset,
-        alt,
-        hotspot
-      }
-    }`,
-    { slug }
-  )
-  return data || null
-}
-
-// Lấy sản phẩm liên quan (cùng danh mục, khác slug)
-export async function getRelatedProducts(
-  category: string,
-  currentSlug: string,
-  limit = 4
-): Promise<SanityProduct[]> {
-  return sanityClient.fetch(
-    `*[_type == "product" && category == $category && slug.current != $currentSlug] | order(order asc) [0...$limit] {
-      _id,
-      name,
-      slug,
-      category,
-      shortDescription,
-      isBestSeller,
-      mainImage {
-        asset,
-        alt,
-        hotspot
-      }
-    }`,
-    { category, currentSlug, limit }
-  )
-}
-
-// Lấy danh sách category (dùng cho filter)
-export async function getCategories(): Promise<string[]> {
-  const data = await sanityClient.fetch(
-    `array::unique(*[_type == "product"].category)`
-  )
-  return data || []
-}
-
-// ============ ARTICLES QUERIES ============
 
 export interface SanityArticle {
   _id: string
@@ -172,12 +30,8 @@ export interface SanityArticle {
   slug: { current: string }
   category: string
   excerpt: string
-  content?: any[]
-  mainImage?: {
-    asset: { _ref: string }
-    alt?: string
-    hotspot?: { x: number; y: number }
-  }
+  content?: PortableTextBlock[]
+  mainImage?: SanityImage
   publishedAt: string
   readTime: number
   isFeatured?: boolean
@@ -188,127 +42,128 @@ export interface SanityArticle {
   order?: number
 }
 
-// Lấy tất cả bài viết (sắp xếp theo ngày và thứ tự nổi bật)
+// ============ GROQ fragments dùng chung ============
+
+const IMAGE = `{ asset, alt, hotspot }`
+
+const PRODUCT_CARD = `
+  _id,
+  name,
+  slug,
+  category,
+  shortDescription,
+  isBestSeller,
+  order,
+  mainImage ${IMAGE}
+`
+
+const ARTICLE_CARD = `
+  _id,
+  title,
+  slug,
+  category,
+  excerpt,
+  publishedAt,
+  readTime,
+  mainImage ${IMAGE}
+`
+
+// ============ PRODUCTS ============
+
+// Danh sách sản phẩm (trang danh sách, trang chủ)
+export async function getAllProducts(): Promise<SanityProduct[]> {
+  return sanityClient.fetch(
+    `*[_type == "product"] | order(order asc, name asc) { ${PRODUCT_CARD}, features }`
+  )
+}
+
+// Sản phẩm bán chạy (trang chủ)
+export async function getBestSellerProducts(limit: number = 8): Promise<SanityProduct[]> {
+  return sanityClient.fetch(
+    `*[_type == "product" && isBestSeller == true] | order(order asc, name asc) [0...$limit] { ${PRODUCT_CARD}, features }`,
+    { limit }
+  )
+}
+
+// Tất cả slug (getStaticPaths)
+export async function getAllProductSlugs(): Promise<{ slug: string }[]> {
+  return sanityClient.fetch(`*[_type == "product" && defined(slug.current)] { "slug": slug.current }`)
+}
+
+// Chi tiết sản phẩm theo slug (gồm thư viện ảnh)
+export async function getProductBySlugWithGalleries(slug: string): Promise<SanityProduct | null> {
+  const data = await sanityClient.fetch(
+    `*[_type == "product" && slug.current == $slug][0] {
+      ${PRODUCT_CARD},
+      features,
+      specs,
+      applications,
+      galleries[] ${IMAGE},
+      description,
+      seoTitle
+    }`,
+    { slug }
+  )
+  return data || null
+}
+
+// Sản phẩm liên quan (cùng danh mục, khác slug)
+export async function getRelatedProducts(
+  category: string,
+  currentSlug: string,
+  limit = 4
+): Promise<SanityProduct[]> {
+  return sanityClient.fetch(
+    `*[_type == "product" && category == $category && slug.current != $currentSlug] | order(order asc) [0...$limit] { ${PRODUCT_CARD} }`,
+    { category, currentSlug, limit }
+  )
+}
+
+// Danh sách danh mục (bộ lọc)
+export async function getCategories(): Promise<string[]> {
+  const data = await sanityClient.fetch(`array::unique(*[_type == "product"].category)`)
+  return data || []
+}
+
+// ============ ARTICLES ============
+
+// Tất cả bài viết (nổi bật và thứ tự trước, rồi theo ngày)
 export async function getAllArticles(): Promise<SanityArticle[]> {
   return sanityClient.fetch(
-    `*[_type == "article"] | order(isFeatured desc, order asc, publishedAt desc) {
-      _id,
-      title,
-      slug,
-      category,
-      excerpt,
-      publishedAt,
-      readTime,
-      isFeatured,
-      order,
-      mainImage {
-        asset,
-        alt,
-        hotspot
-      }
-    }`
+    `*[_type == "article"] | order(isFeatured desc, order asc, publishedAt desc) { ${ARTICLE_CARD}, isFeatured, order }`
   )
 }
 
-// Lấy bài viết nổi bật (dùng làm featured article)
-export async function getFeaturedArticle(): Promise<SanityArticle | null> {
-  return sanityClient.fetch(
-    `*[_type == "article" && isFeatured == true] | order(publishedAt desc) [0] {
-      _id,
-      title,
-      slug,
-      category,
-      excerpt,
-      content,
-      publishedAt,
-      readTime,
-      isFeatured,
-      mainImage {
-        asset,
-        alt,
-        hotspot
-      }
-    }`
-  )
-}
-
-// Lấy bài viết theo danh mục
-export async function getArticlesByCategory(category: string): Promise<SanityArticle[]> {
-  return sanityClient.fetch(
-    `*[_type == "article" && category == $category] | order(publishedAt desc) {
-      _id,
-      title,
-      slug,
-      category,
-      excerpt,
-      publishedAt,
-      readTime,
-      mainImage {
-        asset,
-        alt,
-        hotspot
-      }
-    }`,
-    { category }
-  )
-}
-
-// Lấy chi tiết bài viết theo slug
+// Chi tiết bài viết theo slug
 export async function getArticleBySlug(slug: string): Promise<SanityArticle | null> {
-  return sanityClient.fetch(
+  const data = await sanityClient.fetch(
     `*[_type == "article" && slug.current == $slug][0] {
-      _id,
-      title,
-      slug,
-      category,
-      excerpt,
+      ${ARTICLE_CARD},
       content,
-      publishedAt,
-      readTime,
       isFeatured,
       author,
       tags,
-      mainImage {
-        asset,
-        alt,
-        hotspot
-      },
       seoTitle,
       seoDescription
     }`,
     { slug }
   )
+  return data || null
 }
 
-// Lấy các bài viết liên quan (cùng danh mục, khác slug)
+// Bài viết liên quan (cùng danh mục, khác slug)
 export async function getRelatedArticles(
   category: string,
   currentSlug: string,
   limit = 3
 ): Promise<SanityArticle[]> {
   return sanityClient.fetch(
-    `*[_type == "article" && category == $category && slug.current != $currentSlug] | order(publishedAt desc) [0...$limit] {
-      _id,
-      title,
-      slug,
-      category,
-      excerpt,
-      publishedAt,
-      readTime,
-      mainImage {
-        asset,
-        alt,
-        hotspot
-      }
-    }`,
+    `*[_type == "article" && category == $category && slug.current != $currentSlug] | order(publishedAt desc) [0...$limit] { ${ARTICLE_CARD} }`,
     { category, currentSlug, limit }
   )
 }
 
-// Lấy tất cả slug bài viết (dùng cho getStaticPaths)
+// Tất cả slug bài viết (getStaticPaths)
 export async function getAllArticleSlugs(): Promise<{ slug: string }[]> {
-  const data = await sanityClient.fetch(
-    `*[_type == "article"] { "slug": slug.current }`
-  )
-  return data
+  return sanityClient.fetch(`*[_type == "article" && defined(slug.current)] { "slug": slug.current }`)
 }

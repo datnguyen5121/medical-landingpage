@@ -1,6 +1,7 @@
-﻿import Layout from "../components/Layout"
+import Layout from "../components/Layout"
 import { useState, useEffect, FormEvent, ChangeEvent } from "react"
 import { useRouter } from "next/router"
+import { HOTLINE_TEL } from "../lib/config"
 
 export default function LienHePage() {
   const router = useRouter()
@@ -13,6 +14,7 @@ export default function LienHePage() {
     quantity: "",
     productInterest: "",
     message: "",
+    website: "", // honeypot: người dùng thật không thấy và không điền
   })
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -62,6 +64,7 @@ export default function LienHePage() {
         quantity: "",
         productInterest: router.query.product ? (router.query.product as string) : "",
         message: "",
+        website: "",
       })
     } catch (err) {
       setError(err instanceof Error ? err.message : "Có lỗi xảy ra")
@@ -101,7 +104,7 @@ export default function LienHePage() {
                     icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />,
                     label: "Hotline",
                     value: "0968348698",
-                    href: "tel:19000000",
+                    href: HOTLINE_TEL,
                   },
                   {
                     icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />,
@@ -138,7 +141,7 @@ export default function LienHePage() {
             <div className="bg-blue-900 text-white rounded-lg p-6">
               <p className="font-semibold mb-1">Cần báo giá ngay?</p>
               <p className="text-blue-200 text-sm mb-4">Gọi trực tiếp để được hỗ trợ nhanh nhất</p>
-              <a href="tel:19000000" className="flex items-center justify-center gap-2 w-full py-3 bg-yellow-400 text-blue-900 font-bold rounded text-sm hover:bg-yellow-300 transition-colors">
+              <a href={HOTLINE_TEL} className="flex items-center justify-center gap-2 w-full py-3 bg-yellow-400 text-blue-900 font-bold rounded text-sm hover:bg-yellow-300 transition-colors">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
@@ -184,6 +187,12 @@ export default function LienHePage() {
                     </div>
                   )}
                   <form onSubmit={handleSubmit} className="space-y-4">
+                    <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+                      <label>
+                        Website
+                        <input type="text" name="website" value={formData.website} onChange={handleChange} tabIndex={-1} autoComplete="off" />
+                      </label>
+                    </div>
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">

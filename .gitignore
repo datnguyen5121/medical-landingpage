@@ -1,6 +1,5 @@
 # Dependencies
 node_modules/
-package-lock.json
 yarn.lock
 
 # Next.js build artifacts
@@ -36,3 +35,9 @@ coverage/
 
 # Build output
 .turbo
+
+# Sanity Studio runtime (tự sinh bởi `sanity dev`)
+.sanity/
+
+# TypeScript incremental cache
+*.tsbuildinfo
