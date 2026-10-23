@@ -63,6 +63,16 @@ const clientLogos = [
 ]
 
 export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
+  const heroProduct = bestSellers.find((p) => p.mainImage) || allProducts.find((p) => p.mainImage)
+
+  // Danh mục kèm số lượng và ảnh đại diện (ảnh của sản phẩm đầu tiên có ảnh)
+  const categories = Array.from(new Set(allProducts.map((p) => p.category)))
+    .sort()
+    .map((name) => {
+      const items = allProducts.filter((p) => p.category === name)
+      return { name, count: items.length, image: items.find((p) => p.mainImage)?.mainImage }
+    })
+
   return (
     <Layout
       title="MediWellness – Thiết Bị Y Tế Chất Lượng Cao"
@@ -73,7 +83,7 @@ export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 grid md:grid-cols-2 gap-12 items-center">
           <div>
             <p className="section-label text-blue-300 mb-3">Nhà phân phối thiết bị y tế uy tín</p>
-            <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight mb-5">
+            <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight mb-5 text-balance">
               Giải Pháp Thiết Bị Y Tế <span className="text-yellow-400">Toàn Diện</span> Cho Cơ Sở Y Tế
             </h1>
             <p className="text-blue-200 text-lg leading-relaxed mb-8">
@@ -89,27 +99,46 @@ export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
             </div>
           </div>
 
-          {/* Trust card */}
-          <div className="bg-blue-800/60 border border-blue-700 rounded-lg p-7 space-y-4">
-            <p className="text-blue-200 text-sm font-semibold uppercase tracking-widest mb-2">Chứng nhận &amp; Tiêu chuẩn</p>
-            {[
-              { cert: "ISO 13485", desc: "Quản lý chất lượng thiết bị y tế" },
-              { cert: "CE Marking", desc: "Tiêu chuẩn châu Âu" },
-              { cert: "GMP-WHO", desc: "Thực hành sản xuất tốt" },
-              { cert: "FDA Cleared", desc: "Chứng nhận Hoa Kỳ" },
-            ].map((c) => (
-              <div key={c.cert} className="flex items-center gap-4 p-4 bg-blue-900/50 rounded border border-blue-700/50">
-                <div className="w-10 h-10 bg-yellow-400 rounded flex items-center justify-center shrink-0">
-                  <svg className="w-4 h-4 text-blue-900" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-white font-semibold text-base">{c.cert}</p>
-                  <p className="text-blue-300 text-sm">{c.desc}</p>
-                </div>
-              </div>
-            ))}
+          {/* Ảnh thiết bị chủ lực + chứng nhận */}
+          <div className="space-y-4">
+            {heroProduct?.mainImage && (
+              <Link
+                href={`/san-pham/${heroProduct.slug.current}`}
+                className="block relative aspect-[4/3] bg-white rounded-lg overflow-hidden border border-blue-700"
+              >
+                <Image
+                  src={urlFor(heroProduct.mainImage).width(800).height(600).url()}
+                  alt={heroProduct.mainImage.alt || heroProduct.name}
+                  fill
+                  priority
+                  className="object-contain p-4"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+                <span className="absolute inset-x-0 bottom-0 bg-blue-950/85 px-4 py-2 text-sm font-semibold text-white truncate">
+                  {heroProduct.name}
+                </span>
+              </Link>
+            )}
+            <ul className="grid grid-cols-2 gap-3" aria-label="Chứng nhận và tiêu chuẩn">
+              {[
+                { cert: "ISO 13485", desc: "Quản lý chất lượng" },
+                { cert: "CE Marking", desc: "Tiêu chuẩn châu Âu" },
+                { cert: "GMP-WHO", desc: "Sản xuất tốt" },
+                { cert: "FDA Cleared", desc: "Chứng nhận Hoa Kỳ" },
+              ].map((c) => (
+                <li key={c.cert} className="flex items-center gap-3 p-3 bg-blue-800/60 rounded border border-blue-700">
+                  <span className="w-8 h-8 bg-yellow-400 rounded flex items-center justify-center shrink-0" aria-hidden="true">
+                    <svg className="w-4 h-4 text-blue-900" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </span>
+                  <span>
+                    <span className="block text-white font-semibold text-sm">{c.cert}</span>
+                    <span className="block text-blue-200 text-xs">{c.desc}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>
@@ -150,22 +179,30 @@ export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
             </Link>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-            {Array.from(new Set(allProducts.map(p => p.category))).sort().map((cat) => (
+            {categories.map((cat) => (
               <Link
-                key={cat}
-                href={`/san-pham?category=${encodeURIComponent(cat)}`}
-                className="flex flex-col items-start gap-4 p-6 bg-white border border-slate-200 rounded-lg hover:border-blue-500 hover:shadow-sm transition-all group"
+                key={cat.name}
+                href={`/san-pham?category=${encodeURIComponent(cat.name)}`}
+                className="flex flex-col gap-3 p-4 bg-white border border-slate-200 rounded-lg hover:border-blue-500 hover:shadow-sm transition-all group focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700"
               >
-                <div className="w-12 h-12 bg-blue-800 rounded flex items-center justify-center group-hover:bg-blue-700 transition-colors">
-                  <svg className="w-4.5 h-4.5 text-white w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                  </svg>
+                <div className="relative h-24 w-full rounded bg-slate-50 overflow-hidden flex items-center justify-center">
+                  {cat.image ? (
+                    <Image
+                      src={urlFor(cat.image).width(300).height(200).url()}
+                      alt=""
+                      fill
+                      className="object-contain p-2"
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                    />
+                  ) : (
+                    <svg className="w-8 h-8 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" />
+                    </svg>
+                  )}
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-800 group-hover:text-blue-800 leading-snug">{cat}</p>
-                  <p className="text-sm text-slate-400 mt-1">
-                    {allProducts.filter((p) => p.category === cat).length} sản phẩm
-                  </p>
+                  <p className="text-sm font-semibold text-slate-800 group-hover:text-blue-800 leading-snug">{cat.name}</p>
+                  <p className="text-sm text-slate-500 mt-1">{cat.count} sản phẩm</p>
                 </div>
               </Link>
             ))}
@@ -181,7 +218,7 @@ export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
               <p className="section-label mb-1">Nổi Bật</p>
               <h2 className="section-title">Sản Phẩm Được Tin Dùng Nhiều Nhất</h2>
             </div>
-            <Link href="/san-pham?category=Robot%20Ph%E1%BB%A5c%20H%E1%BB%93i" className="text-sm font-semibold text-blue-700 hover:text-blue-900 flex items-center gap-1 shrink-0">
+            <Link href="/san-pham" className="text-sm font-semibold text-blue-700 hover:text-blue-900 flex items-center gap-1 shrink-0">
               Xem tất cả
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -192,7 +229,7 @@ export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
             {bestSellers.map((product) => (
               <div key={product._id} className="card flex flex-col overflow-hidden group">
                 <Link href={`/san-pham/${product.slug.current}`} className="block">
-                <div className="h-56 bg-white border-b border-slate-200 flex items-center justify-center relative overflow-hidden">
+                <div className="h-56 bg-slate-50 border-b border-slate-200 flex items-center justify-center relative overflow-hidden">
                   {product.mainImage ? (
                     <Image
                       src={urlFor(product.mainImage).width(400).height(300).url()}
@@ -224,13 +261,21 @@ export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
                       </div>
                     ))}
                   </div>
-                  <Link
-                    href={`/lien-he?product=${encodeURIComponent(product.name)}`}
-                    onClick={trackQuoteConversion}
-                    className="block text-center px-4 py-3 bg-blue-700 text-white rounded text-sm font-semibold hover:bg-blue-800 transition-colors"
-                  >
-                    Liên Hệ Tư Vấn &amp; Báo Giá
-                  </Link>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Link
+                      href={`/san-pham/${product.slug.current}`}
+                      className="text-center px-3 py-3 border border-blue-700 text-blue-700 rounded text-sm font-semibold hover:bg-blue-50 transition-colors"
+                    >
+                      Chi tiết
+                    </Link>
+                    <Link
+                      href={`/lien-he?product=${encodeURIComponent(product.name)}`}
+                      onClick={trackQuoteConversion}
+                      className="text-center px-3 py-3 bg-blue-700 text-white rounded text-sm font-semibold hover:bg-blue-800 transition-colors"
+                    >
+                      Báo giá
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}

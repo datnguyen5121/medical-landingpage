@@ -44,7 +44,7 @@ function ImageGallery({ product }: { product: SanityProduct }) {
   
   return (
     <div className="space-y-3">
-      <div className="bg-white border border-slate-200 rounded-xl flex items-center justify-center h-96 relative overflow-hidden group">
+      <div className="bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center h-64 sm:h-80 lg:h-96 relative overflow-hidden group">
         <Image
           src={urlFor(currentImage).width(800).height(800).url()}
           alt={currentImage.alt || "Sản phẩm"}
@@ -62,7 +62,7 @@ function ImageGallery({ product }: { product: SanityProduct }) {
           <>
             <button
               onClick={handlePrevious}
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-slate-900 rounded-full p-2 transition-all opacity-0 group-hover:opacity-100 shadow-lg hover:shadow-xl z-10"
+              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-slate-900 rounded-full p-2 transition-all md:opacity-0 md:group-hover:opacity-100 focus-visible:opacity-100 shadow-lg hover:shadow-xl z-10"
               aria-label="Ảnh trước"
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -71,7 +71,7 @@ function ImageGallery({ product }: { product: SanityProduct }) {
             </button>
             <button
               onClick={handleNext}
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-slate-900 rounded-full p-2 transition-all opacity-0 group-hover:opacity-100 shadow-lg hover:shadow-xl z-10"
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-slate-900 rounded-full p-2 transition-all md:opacity-0 md:group-hover:opacity-100 focus-visible:opacity-100 shadow-lg hover:shadow-xl z-10"
               aria-label="Ảnh tiếp theo"
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -106,7 +106,7 @@ function ImageGallery({ product }: { product: SanityProduct }) {
         <div className="text-center text-sm text-slate-500">Ảnh {activeImageIndex + 1} / {allImages.length}</div>
       )}
       
-      <div className="flex gap-3 mt-4">
+      <div className="hidden sm:flex gap-3 mt-4">
         {["CE", "ISO 13485", "GMP-WHO"].map((cert) => (
           <div key={cert} className="flex-1 bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 text-center">
             <p className="text-xs font-bold text-blue-800">{cert}</p>
@@ -140,36 +140,33 @@ export default function ProductDetail({ product, related }: Props) {
       {/* ── BREADCRUMB ───────────────────────────────────────────────────── */}
       <div className="bg-slate-50 border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <nav className="flex items-center gap-2 text-sm text-slate-500">
-            <Link href="/" className="hover:text-blue-700 transition-colors">Trang chủ</Link>
-            <svg className="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm text-slate-500 overflow-x-auto whitespace-nowrap [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <Link href="/" className="hover:text-blue-700 transition-colors shrink-0">Trang chủ</Link>
+            <svg className="w-4 h-4 text-slate-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-            <Link href="/san-pham" className="hover:text-blue-700 transition-colors">Sản phẩm</Link>
-            <svg className="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <Link href="/san-pham" className="hover:text-blue-700 transition-colors shrink-0">Sản phẩm</Link>
+            <svg className="w-4 h-4 text-slate-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
             <Link
               href={`/san-pham?category=${encodeURIComponent(product.category)}`}
-              className="hover:text-blue-700 transition-colors"
+              className="hover:text-blue-700 transition-colors shrink-0"
             >
               {product.category}
             </Link>
-            <svg className="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-4 h-4 text-slate-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-            <svg className="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-            <span className="text-slate-800 font-medium line-clamp-1">{product.name}</span>
+            <span className="text-slate-800 font-medium" aria-current="page">{product.name}</span>
           </nav>
         </div>
       </div>
 
       {/* ── PRODUCT HERO ─────────────────────────────────────────────────── */}
-      <section className="py-12 bg-white">
+      <section className="py-6 sm:py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-start">
+          <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 items-start">
 
             {/* Left: Image Gallery */}
             <div>
@@ -228,7 +225,7 @@ export default function ProductDetail({ product, related }: Props) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                     d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span>Bạn cần tư vấn về sản phẩm hoặc cần tìm hiểu chính sách dành cho đại lý? Vui lòng gọi trực tiếp cho chúng tôi qua Hotline <a href={HOTLINE_TEL} className="font-bold text-blue-700 hover:underline">0968348698</a> hoặc liên hệ qua Messenger</span>
+                <span>Bạn cần tư vấn về sản phẩm hoặc cần tìm hiểu chính sách dành cho đại lý? Vui lòng gọi trực tiếp cho chúng tôi qua Hotline <a href={HOTLINE_TEL} className="font-bold text-blue-700 hover:underline">0968348698</a> hoặc nhắn Zalo</span>
               </div>
               {/* Support note */}
               <div className="mt-5 flex items-center gap-2 text-sm text-slate-500 bg-slate-50 rounded-lg px-4 py-3 border border-slate-200">
@@ -410,6 +407,23 @@ export default function ProductDetail({ product, related }: Props) {
           </div>
         </section>
       )}
+      {/* ── THANH CTA DÍNH (MOBILE) ──────────────────────────────────────── */}
+      <div className="lg:hidden fixed inset-x-0 bottom-0 z-30 bg-white border-t border-slate-200 px-3 py-3 flex gap-3 shadow-[0_-4px_12px_rgba(0,0,0,0.08)]">
+        <a
+          href={HOTLINE_TEL}
+          onClick={trackQuoteConversion}
+          className="flex-1 text-center py-3 border-2 border-blue-700 text-blue-700 rounded-lg text-sm font-bold"
+        >
+          Gọi tư vấn
+        </a>
+        <Link
+          href={`/lien-he?product=${encodeURIComponent(product.name)}`}
+          onClick={trackQuoteConversion}
+          className="flex-1 text-center py-3 bg-blue-700 text-white rounded-lg text-sm font-bold"
+        >
+          Yêu cầu báo giá
+        </Link>
+      </div>
     </Layout>
   )
 }

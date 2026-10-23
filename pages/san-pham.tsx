@@ -114,7 +114,7 @@ export default function SanPhamPage({ products, categories }: Props) {
                 {filtered.map((product) => (
                     <div key={product._id} className="card flex flex-col overflow-hidden group">
                     <Link href={`/san-pham/${product.slug.current}`} className="block">
-                    <div className="h-72 w-72 bg-white border-b border-slate-200 flex items-center justify-center relative overflow-hidden mx-auto">
+                    <div className="h-72 w-full max-w-xs bg-slate-50 border-b border-slate-200 flex items-center justify-center relative overflow-hidden mx-auto">
                       {product.mainImage ? (
                         <Image
                           src={urlFor(product.mainImage).width(600).height(600).url()}
@@ -142,14 +142,33 @@ export default function SanPhamPage({ products, categories }: Props) {
                       <h3 className="text-base font-bold text-slate-900 mb-2 leading-snug hover:text-blue-700 transition-colors">{product.name}</h3>
                       </Link>
                       <p className="text-sm text-slate-500 leading-relaxed line-clamp-2 mb-3 flex-1" title={product.shortDescription}>{product.shortDescription}</p>
-                     
-                      <Link
-                        href={`/lien-he?product=${encodeURIComponent(product.name)}`}
-                        onClick={trackQuoteConversion}
-                        className="block text-center px-4 py-3 bg-blue-700 text-white rounded text-sm font-semibold hover:bg-blue-800 transition-colors"
-                      >
-                        Liên Hệ &amp; Yêu Cầu Báo Giá
-                      </Link>
+                      {product.features && product.features.length > 0 && (
+                        <ul className="mb-4 space-y-1.5">
+                          {product.features.slice(0, 2).map((f) => (
+                            <li key={f} className="flex items-start gap-2 text-sm text-slate-600">
+                              <svg className="w-4 h-4 text-teal-600 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                              </svg>
+                              <span className="line-clamp-2">{f}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      <div className="grid grid-cols-2 gap-2">
+                        <Link
+                          href={`/san-pham/${product.slug.current}`}
+                          className="text-center px-3 py-3 border border-blue-700 text-blue-700 rounded text-sm font-semibold hover:bg-blue-50 transition-colors"
+                        >
+                          Chi tiết
+                        </Link>
+                        <Link
+                          href={`/lien-he?product=${encodeURIComponent(product.name)}`}
+                          onClick={trackQuoteConversion}
+                          className="text-center px-3 py-3 bg-blue-700 text-white rounded text-sm font-semibold hover:bg-blue-800 transition-colors"
+                        >
+                          Báo giá
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 ))}

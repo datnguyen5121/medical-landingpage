@@ -1,7 +1,7 @@
 import Layout from "../components/Layout"
 import { useState, useEffect, FormEvent, ChangeEvent } from "react"
 import { useRouter } from "next/router"
-import { HOTLINE_TEL } from "../lib/config"
+import { HOTLINE_TEL, ADDRESS } from "../lib/config"
 
 export default function LienHePage() {
   const router = useRouter()
@@ -88,18 +88,19 @@ export default function LienHePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-5 gap-10">
 
           {/* Left: info */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
             <div className="bg-white border border-slate-200 rounded-lg p-6">
               <h2 className="text-base font-bold text-slate-900 mb-5 pb-3 border-b border-slate-100">
                 Thông Tin Liên Hệ
               </h2>
               <div className="space-y-4">
                 {[
-                  {
+                  ...(ADDRESS ? [{
                     icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />,
                     label: "Trụ sở chính",
-                    value: "Tầng 5, Tòa nhà ABC, 123 Đường XYZ, Hà Nội",
-                  },
+                    value: ADDRESS,
+                    href: undefined as string | undefined,
+                  }] : []),
                   {
                     icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />,
                     label: "Hotline",
@@ -161,7 +162,7 @@ export default function LienHePage() {
           </div>
 
           {/* Right: form */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-3 order-1 lg:order-2">
             <div className="bg-white border border-slate-200 rounded-lg p-8">
               <h2 className="text-xl font-bold text-slate-900 mb-1">Gửi Yêu Cầu Tư Vấn / Báo Giá</h2>
               <p className="text-base text-slate-500 mb-6">Vui lòng điền đầy đủ thông tin. Chúng tôi sẽ phản hồi trong vòng 4 giờ làm việc.</p>
@@ -198,20 +199,20 @@ export default function LienHePage() {
                         <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">
                           Họ và tên <span className="text-red-500">*</span>
                         </label>
-                        <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required placeholder="Họ và tên" className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
+                        <input type="text" autoComplete="name" name="fullName" value={formData.fullName} onChange={handleChange} required placeholder="Họ và tên" className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">
                           Số điện thoại <span className="text-red-500">*</span>
                         </label>
-                        <input type="tel" name="phone" value={formData.phone} onChange={handleChange} required placeholder="0901 234 567" className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
+                        <input type="tel" inputMode="tel" autoComplete="tel" name="phone" value={formData.phone} onChange={handleChange} required placeholder="0901 234 567" className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
                       </div>
                     </div>
 
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">Email</label>
-                        <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="email@example.com" className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
+                        <input type="email" inputMode="email" autoComplete="email" name="email" value={formData.email} onChange={handleChange} placeholder="email@example.com" className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">Chức vụ</label>
@@ -230,7 +231,7 @@ export default function LienHePage() {
                         <label className="block text-sm font-semibold text-slate-700 mb-2 uppercase tracking-wide">
                           Số lượng máy cần mua <span className="text-red-500">*</span>
                         </label>
-                        <input type="number" name="quantity" value={formData.quantity} onChange={handleChange} required min="1" placeholder="1" className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
+                        <input type="number" inputMode="numeric" name="quantity" value={formData.quantity} onChange={handleChange} required min="1" placeholder="1" className="w-full border border-slate-300 rounded px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600" />
                       </div>
                     </div>
 
