@@ -5,6 +5,13 @@
 @tailwind utilities;
 
 @layer base {
+  /* Cản trở lưu ảnh: không kéo ra ngoài, không bôi chọn, không hiện menu nhấn giữ trên iOS/Android */
+  img {
+    -webkit-user-drag: none;
+    -webkit-touch-callout: none;
+    user-select: none;
+  }
+
   html {
     scroll-behavior: smooth;
     font-family: 'Inter', 'Segoe UI', Arial, sans-serif;

@@ -51,30 +51,60 @@ const commitments = [
   },
 ]
 
-// Thêm slide: đặt ảnh 16:9 vào public/images/carousel/ rồi thêm một mục vào đây
-const heroSlides: CarouselSlide[] = [
+// Carousel: màn hình laptop (từ 1024px) dùng ảnh trong public/images/carousel/laptop-169,
+// màn hình nhỏ hơn dùng ảnh trong public/images/carousel/mobile.
+// Thêm slide: đặt ảnh vào đúng thư mục rồi thêm một mục vào mảng tương ứng.
+const laptopSlides: CarouselSlide[] = [
   {
-    src: "/images/carousel/buong-oxy-cao-ap.png",
-    alt: "Buồng oxy cao áp MediWellness – phục hồi sâu, tăng cường sức khỏe, nâng cao chất lượng sống. Hotline 0968 348 698",
+    src: "/images/carousel/laptop-169/giai-phap-thiet-bi-y-te-toan-dien.png",
+    alt: "MediWellness – nhà phân phối thiết bị y tế uy tín, giải pháp thiết bị y tế toàn diện cho cơ sở y tế. Hơn 300 sản phẩm, phục vụ 100+ cơ sở y tế trên toàn quốc",
+    href: "/san-pham",
+  },
+  {
+    src: "/images/carousel/laptop-169/buong-oxy-cao-ap.png",
+    alt: "Buồng oxy cao áp MediWellness. Hotline 0968 348 698",
     href: `/san-pham?category=${encodeURIComponent("Buồng oxy cao áp")}`,
   },
   {
-    src: "/images/carousel/robot-phuc-hoi-chuc-nang-chan.png",
-    alt: "Robot phục hồi chức năng chân MediWellness – đứng lên một lần nữa, kiến tạo cuộc sống không giới hạn. Hotline 0968 348 698",
+    src: "/images/carousel/laptop-169/robot-phuc-hoi-chuc-nang-chan.png",
+    alt: "Robot phục hồi chức năng chân MediWellness – đứng lên một lần nữa, kiến tạo cuộc sống không giới hạn",
     href: `/san-pham?category=${encodeURIComponent("Robot tập phục hồi chức năng")}`,
   },
   {
-    src: "/images/carousel/cabin-thai-doc.jpg",
+    src: "/images/carousel/laptop-169/cabin-xong-hoi-thai-doc.png",
     alt: "Cabin xông hơi thải độc MediWellness – thư giãn sâu, chăm sóc cơ thể, tái tạo năng lượng",
     href: `/san-pham?category=${encodeURIComponent("Cabin thải độc sinh học")}`,
   },
   {
-    src: "/images/carousel/buong-oxy-cao-ap-oxybarica.png",
+    src: "/images/carousel/laptop-169/robot-phuc-hoi-chuc-nang-chan-aigo-ii.png",
+    alt: "Robot phục hồi chức năng chân AiGo-II MediWellness – giải pháp phục hồi vận động toàn diện tại nhà. Hotline 0968 348 698",
+    href: `/san-pham?category=${encodeURIComponent("Robot tập phục hồi chức năng")}`,
+  },
+]
+
+const mobileSlides: CarouselSlide[] = [
+  {
+    src: "/images/carousel/mobile/buong-oxy-cao-ap.png",
+    alt: "Buồng oxy cao áp MediWellness – phục hồi sâu, tăng cường sức khỏe, nâng cao chất lượng sống. Hotline 0968 348 698",
+    href: `/san-pham?category=${encodeURIComponent("Buồng oxy cao áp")}`,
+  },
+  {
+    src: "/images/carousel/mobile/robot-phuc-hoi-chuc-nang-chan.png",
+    alt: "Robot phục hồi chức năng chân MediWellness – đứng lên một lần nữa, kiến tạo cuộc sống không giới hạn. Hotline 0968 348 698",
+    href: `/san-pham?category=${encodeURIComponent("Robot tập phục hồi chức năng")}`,
+  },
+  {
+    src: "/images/carousel/mobile/cabin-thai-doc.jpg",
+    alt: "Cabin xông hơi thải độc MediWellness – thư giãn sâu, chăm sóc cơ thể, tái tạo năng lượng",
+    href: `/san-pham?category=${encodeURIComponent("Cabin thải độc sinh học")}`,
+  },
+  {
+    src: "/images/carousel/mobile/buong-oxy-cao-ap-oxybarica.png",
     alt: "Buồng oxy cao áp Oxybarica MediWellness – công nghệ phục hồi và tái tạo sức khỏe toàn diện. Hotline 0968 348 698",
     href: `/san-pham?category=${encodeURIComponent("Buồng oxy cao áp")}`,
   },
   {
-    src: "/images/carousel/robot-phuc-hoi-chuc-nang-chan-aigo-ii.png",
+    src: "/images/carousel/mobile/robot-phuc-hoi-chuc-nang-chan-aigo-ii.png",
     alt: "Robot phục hồi chức năng chân AiGo-II MediWellness – giải pháp phục hồi vận động toàn diện tại nhà. Hotline 0968 348 698",
     href: `/san-pham?category=${encodeURIComponent("Robot tập phục hồi chức năng")}`,
   },
@@ -107,7 +137,7 @@ export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
     >
       {/* ── HERO CAROUSEL ────────────────────────────────────────────────── */}
       <h1 className="sr-only">MediWellness – Giải pháp thiết bị y tế toàn diện cho cơ sở y tế</h1>
-      <HeroCarousel slides={heroSlides} />
+      <HeroCarousel laptopSlides={laptopSlides} mobileSlides={mobileSlides} />
 
       {/* ── STATS BAR ─────────────────────────────────────────────────────── */}
       <section className="bg-white border-b border-slate-200">
