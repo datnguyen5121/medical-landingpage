@@ -1,4 +1,6 @@
 import { defineField, defineType } from 'sanity'
+import { slugifyVi } from '../lib/slugify'
+import { altTextField, hiddenField } from '../lib/fields'
 
 export default defineType({
   name: 'article',
@@ -18,15 +20,7 @@ export default defineType({
       options: {
         source: 'title',
         maxLength: 200,
-        slugify: (input: string) =>
-          input
-            .toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .replace(/đ/g, 'd')
-            .replace(/[^a-z0-9\s-]/g, '')
-            .replace(/\s+/g, '-')
-            .slice(0, 200),
+        slugify: slugifyVi,
       },
       validation: (Rule) => Rule.required(),
     }),
@@ -64,14 +58,7 @@ export default defineType({
         {
           type: 'image',
           options: { hotspot: true },
-          fields: [
-            {
-              name: 'alt',
-              type: 'string',
-              title: 'Mô tả ảnh (alt text)',
-              validation: (Rule) => Rule.required(),
-            },
-          ],
+          fields: [altTextField()],
         },
       ],
     }),
@@ -82,14 +69,7 @@ export default defineType({
       options: {
         hotspot: true,
       },
-      fields: [
-        {
-          name: 'alt',
-          type: 'string',
-          title: 'Mô tả ảnh (alt text)',
-          validation: (Rule) => Rule.required(),
-        },
-      ],
+      fields: [altTextField()],
     }),
     defineField({
       name: 'publishedAt',
@@ -111,6 +91,7 @@ export default defineType({
       description: 'Đánh dấu để hiển thị bài viết lớn ở đầu trang',
       initialValue: false,
     }),
+    hiddenField,
     defineField({
       name: 'order',
       title: 'Thứ tự hiển thị',
@@ -138,7 +119,8 @@ export default defineType({
       name: 'seoTitle',
       title: 'SEO Title',
       type: 'string',
-      description: 'Tiêu đề để hiển thị trên search engines (nếu khác với tiêu đề chính)',
+      description: 'Tiêu đề để hiển thị trên search engines (nếu khác với tiêu đề chính). Nên không quá 60 ký tự',
+      validation: (Rule) => Rule.max(60).warning('Nên không quá 60 ký tự để không bị cắt trên Google'),
     }),
     defineField({
       name: 'seoDescription',
@@ -146,6 +128,7 @@ export default defineType({
       type: 'text',
       rows: 2,
       description: 'Mô tả ngắn cho search engines (tối đa 160 ký tự)',
+      validation: (Rule) => Rule.max(160).warning('Nên không quá 160 ký tự để không bị cắt trên Google'),
     }),
   ],
   preview: {
@@ -153,15 +136,16 @@ export default defineType({
       title: 'title',
       category: 'category',
       date: 'publishedAt',
+      hidden: 'isHidden',
       media: 'mainImage',
     },
-    prepare(selection) {
-      const { title, category, date, media } = selection
-      return {
-        title,
-        subtitle: category ? `${category} • ${new Date(date).toLocaleDateString('vi-VN')}` : '',
-        media,
-      }
+    prepare({ title, category, date, hidden, media }) {
+      const parts = [
+        hidden ? '[Ẩn]' : null,
+        category,
+        date ? new Date(date).toLocaleDateString('vi-VN') : null,
+      ].filter(Boolean)
+      return { title, subtitle: parts.join(' • '), media }
     },
   },
 })

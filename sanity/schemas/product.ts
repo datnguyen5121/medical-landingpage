@@ -1,4 +1,6 @@
 import { defineField, defineType } from 'sanity'
+import { slugifyVi } from '../lib/slugify'
+import { altTextField, hiddenField } from '../lib/fields'
 
 export default defineType({
   name: 'product',
@@ -18,15 +20,7 @@ export default defineType({
       options: {
         source: 'name',
         maxLength: 200,
-        slugify: (input: string) =>
-          input
-            .toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .replace(/đ/g, 'd')
-            .replace(/[^a-z0-9\s-]/g, '')
-            .replace(/\s+/g, '-')
-            .slice(0, 200),
+        slugify: slugifyVi,
       },
       validation: (Rule) => Rule.required(),
     }),
@@ -65,15 +59,7 @@ export default defineType({
       options: {
         hotspot: true,
       },
-      fields: [
-        {
-          name: 'alt',
-          type: 'string',
-          title: 'Mô tả ảnh (alt text)',
-          description: 'Quan trọng cho SEO – mô tả ngắn gọn nội dung ảnh',
-          validation: (Rule) => Rule.required(),
-        },
-      ],
+      fields: [altTextField({ description: 'Quan trọng cho SEO – mô tả ngắn gọn nội dung ảnh' })],
     }),
     defineField({
       name: 'galleries',
@@ -83,14 +69,7 @@ export default defineType({
         {
           type: 'image',
           options: { hotspot: true },
-          fields: [
-            {
-              name: 'alt',
-              type: 'string',
-              title: 'Mô tả ảnh (alt text)',
-              validation: (Rule) => Rule.required(),
-            },
-          ],
+          fields: [altTextField()],
         },
       ],
       description: 'Thêm tối đa 5 ảnh để khách hàng có thể xem chi tiết sản phẩm từ nhiều góc độ',
@@ -124,11 +103,7 @@ export default defineType({
           type: 'image',
           options: { hotspot: true },
           fields: [
-            {
-              name: 'alt',
-              type: 'string',
-              title: 'Alt text',
-            },
+            altTextField({ required: false }),
             {
               name: 'caption',
               type: 'string',
@@ -183,6 +158,7 @@ export default defineType({
       type: 'boolean',
       initialValue: false,
     }),
+    hiddenField,
     defineField({
       name: 'seoTitle',
       title: 'SEO Title',
@@ -201,8 +177,12 @@ export default defineType({
   preview: {
     select: {
       title: 'name',
-      subtitle: 'category',
+      category: 'category',
+      hidden: 'isHidden',
       media: 'mainImage',
+    },
+    prepare({ title, category, hidden, media }) {
+      return { title, subtitle: [hidden ? '[Ẩn]' : null, category].filter(Boolean).join(' • '), media }
     },
   },
   orderings: [

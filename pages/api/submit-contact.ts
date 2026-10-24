@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { sanityServerClient } from '../../lib/sanity/client'
+import { sanityWriteClient } from '../../lib/sanity/write-client'
 import { writeToken } from '../../lib/sanity/env'
 import { validateContact } from '../../lib/contact-validation'
 import { isRateLimited } from '../../lib/rate-limit'
@@ -48,7 +48,7 @@ export default async function handler(
   }
 
   try {
-    await sanityServerClient.create({
+    await sanityWriteClient.create({
       _type: 'contact',
       ...result.data,
       submittedAt: new Date().toISOString(),

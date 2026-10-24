@@ -13,7 +13,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   let dynamic: { loc: string; lastmod?: string }[] = []
   try {
     const docs: { _type: string; slug: string; _updatedAt: string }[] = await sanityClient.fetch(
-      `*[_type in ["product","article"] && defined(slug.current)]{ _type, "slug": slug.current, _updatedAt }`
+      `*[_type in ["product","article"] && isHidden != true && defined(slug.current)]{ _type, "slug": slug.current, _updatedAt }`
     )
     dynamic = docs.map((d) => ({
       loc: `${d._type === 'product' ? '/san-pham' : '/tin-tuc'}/${d.slug}`,

@@ -1,16 +1,12 @@
 import { createClient } from '@sanity/client'
-import { projectId, dataset, apiVersion, writeToken } from './env'
+import { projectId, dataset, apiVersion } from './env'
 
-// Chỉ import từ code chạy trên server (getStaticProps, API route). Dataset để Private
-// nên mọi truy vấn đều cần token. Không dùng CDN vì CDN không phục vụ dataset private.
+// Client ĐỌC: dataset ở chế độ public nên dùng CDN và không cần token (quyền tối thiểu).
+// Nếu sau này chuyển dataset sang Private, thêm `token` cho client này và đặt `useCdn: false`.
+// Dùng cho code chạy trên server (getStaticProps, sitemap); ghi dữ liệu dùng write-client.ts.
 export const sanityClient = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: false,
-  token: writeToken,
-  ignoreBrowserTokenWarning: true,
+  useCdn: true,
 })
-
-// Giữ tên cũ cho API route ghi dữ liệu
-export const sanityServerClient = sanityClient

@@ -76,27 +76,27 @@ const ARTICLE_CARD = `
 // Danh sách sản phẩm (trang danh sách, trang chủ)
 export async function getAllProducts(): Promise<SanityProduct[]> {
   return sanityClient.fetch(
-    `*[_type == "product"] | order(order asc, name asc) { ${PRODUCT_CARD}, features }`
+    `*[_type == "product" && isHidden != true] | order(order asc, name asc) { ${PRODUCT_CARD}, features }`
   )
 }
 
 // Sản phẩm bán chạy (trang chủ)
 export async function getBestSellerProducts(limit: number = 8): Promise<SanityProduct[]> {
   return sanityClient.fetch(
-    `*[_type == "product" && isBestSeller == true] | order(order asc, name asc) [0...$limit] { ${PRODUCT_CARD}, features }`,
+    `*[_type == "product" && isHidden != true && isBestSeller == true] | order(order asc, name asc) [0...$limit] { ${PRODUCT_CARD}, features }`,
     { limit }
   )
 }
 
 // Tất cả slug (getStaticPaths)
 export async function getAllProductSlugs(): Promise<{ slug: string }[]> {
-  return sanityClient.fetch(`*[_type == "product" && defined(slug.current)] { "slug": slug.current }`)
+  return sanityClient.fetch(`*[_type == "product" && isHidden != true && defined(slug.current)] { "slug": slug.current }`)
 }
 
 // Chi tiết sản phẩm theo slug (gồm thư viện ảnh)
 export async function getProductBySlugWithGalleries(slug: string): Promise<SanityProduct | null> {
   const data = await sanityClient.fetch(
-    `*[_type == "product" && slug.current == $slug][0] {
+    `*[_type == "product" && isHidden != true && slug.current == $slug][0] {
       ${PRODUCT_CARD},
       features,
       specs,
@@ -117,14 +117,14 @@ export async function getRelatedProducts(
   limit = 4
 ): Promise<SanityProduct[]> {
   return sanityClient.fetch(
-    `*[_type == "product" && category == $category && slug.current != $currentSlug] | order(order asc) [0...$limit] { ${PRODUCT_CARD} }`,
+    `*[_type == "product" && isHidden != true && category == $category && slug.current != $currentSlug] | order(order asc) [0...$limit] { ${PRODUCT_CARD} }`,
     { category, currentSlug, limit }
   )
 }
 
 // Danh sách danh mục (bộ lọc)
 export async function getCategories(): Promise<string[]> {
-  const data = await sanityClient.fetch(`array::unique(*[_type == "product"].category)`)
+  const data = await sanityClient.fetch(`array::unique(*[_type == "product" && isHidden != true].category)`)
   return data || []
 }
 
@@ -133,14 +133,14 @@ export async function getCategories(): Promise<string[]> {
 // Tất cả bài viết (nổi bật và thứ tự trước, rồi theo ngày)
 export async function getAllArticles(): Promise<SanityArticle[]> {
   return sanityClient.fetch(
-    `*[_type == "article"] | order(isFeatured desc, order asc, publishedAt desc) { ${ARTICLE_CARD}, isFeatured, order }`
+    `*[_type == "article" && isHidden != true] | order(isFeatured desc, order asc, publishedAt desc) { ${ARTICLE_CARD}, isFeatured, order }`
   )
 }
 
 // Chi tiết bài viết theo slug
 export async function getArticleBySlug(slug: string): Promise<SanityArticle | null> {
   const data = await sanityClient.fetch(
-    `*[_type == "article" && slug.current == $slug][0] {
+    `*[_type == "article" && isHidden != true && slug.current == $slug][0] {
       ${ARTICLE_CARD},
       content,
       isFeatured,
@@ -161,12 +161,12 @@ export async function getRelatedArticles(
   limit = 3
 ): Promise<SanityArticle[]> {
   return sanityClient.fetch(
-    `*[_type == "article" && category == $category && slug.current != $currentSlug] | order(publishedAt desc) [0...$limit] { ${ARTICLE_CARD} }`,
+    `*[_type == "article" && isHidden != true && category == $category && slug.current != $currentSlug] | order(publishedAt desc) [0...$limit] { ${ARTICLE_CARD} }`,
     { category, currentSlug, limit }
   )
 }
 
 // Tất cả slug bài viết (getStaticPaths)
 export async function getAllArticleSlugs(): Promise<{ slug: string }[]> {
-  return sanityClient.fetch(`*[_type == "article" && defined(slug.current)] { "slug": slug.current }`)
+  return sanityClient.fetch(`*[_type == "article" && isHidden != true && defined(slug.current)] { "slug": slug.current }`)
 }

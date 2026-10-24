@@ -74,8 +74,39 @@ export default defineType({
   preview: {
     select: {
       title: 'fullName',
-      subtitle: 'organization',
-      media: 'submittedAt',
+      organization: 'organization',
+      status: 'status',
+      submittedAt: 'submittedAt',
+    },
+    prepare({ title, organization, status, submittedAt }) {
+      const statusLabel: Record<string, string> = {
+        pending: 'Chưa xử lý',
+        processing: 'Đang xử lý',
+        completed: 'Đã hoàn thành',
+        rejected: 'Từ chối',
+      }
+      const parts = [
+        statusLabel[status as string] ?? status,
+        submittedAt ? new Date(submittedAt).toLocaleDateString('vi-VN') : null,
+        organization,
+      ].filter(Boolean)
+      return { title, subtitle: parts.join(' • ') }
     },
   },
+  // Mục đầu tiên là thứ tự mặc định: lead mới nhất lên đầu
+  orderings: [
+    {
+      title: 'Mới nhất trước',
+      name: 'submittedAtDesc',
+      by: [{ field: 'submittedAt', direction: 'desc' }],
+    },
+    {
+      title: 'Trạng thái',
+      name: 'statusAsc',
+      by: [
+        { field: 'status', direction: 'asc' },
+        { field: 'submittedAt', direction: 'desc' },
+      ],
+    },
+  ],
 })

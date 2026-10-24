@@ -1,4 +1,5 @@
 import dynamic from 'next/dynamic'
+import Head from 'next/head'
 
 const SanityStudio = dynamic(() => import('../../components/SanityStudio'), {
   ssr: false,
@@ -10,5 +11,13 @@ const SanityStudio = dynamic(() => import('../../components/SanityStudio'), {
 })
 
 export default function StudioPage() {
-  return <SanityStudio />
+  return (
+    <>
+      <Head>
+        <title>MediWellness – Quản lý nội dung</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Head>
+      <SanityStudio />
+    </>
+  )
 }
