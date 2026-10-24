@@ -1,5 +1,5 @@
 import Layout from '../../components/Layout'
-import Image from 'next/image'
+import SanityImage from "../../components/SanityImage"
 import Link from 'next/link'
 import { getArticleBySlug, getAllArticleSlugs, getRelatedArticles, SanityArticle } from '../../lib/sanity/queries'
 import { urlFor } from '../../lib/sanity/image'
@@ -27,12 +27,13 @@ const components: PortableTextComponents = {
   types: {
     image: ({ value }) => (
       <div className="relative w-full h-96 my-6 rounded-lg overflow-hidden">
-        <Image
-          src={urlFor(value).url()}
+        <SanityImage
+          image={value}
           alt={value.alt || 'Article image'}
           fill
           className="object-cover"
-        />
+        sizes="(max-width: 768px) 100vw, 768px"
+/>
       </div>
     ),
   },
@@ -53,7 +54,7 @@ const components: PortableTextComponents = {
 }
 
 export default function ArticlePage({ article, relatedArticles }: ArticlePageProps) {
-  const imageUrl = article.mainImage ? urlFor(article.mainImage).width(1200).url() : undefined
+  const imageUrl = article.mainImage ? urlFor(article.mainImage).width(1200).height(630).fit('crop').format('jpg').quality(80).url() : undefined
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -100,13 +101,14 @@ export default function ArticlePage({ article, relatedArticles }: ArticlePagePro
           {/* Featured image */}
           {article.mainImage && (
             <div className="relative w-full h-96 mb-8 rounded-lg overflow-hidden">
-              <Image
-                src={urlFor(article.mainImage).url()}
+              <SanityImage
+                image={article.mainImage}
                 alt={article.mainImage.alt || article.title}
                 fill
                 className="object-cover"
                 priority
-              />
+              sizes="(max-width: 1024px) 100vw, 896px"
+/>
             </div>
           )}
 
@@ -143,12 +145,13 @@ export default function ArticlePage({ article, relatedArticles }: ArticlePagePro
                   <div className="bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-md transition-shadow flex flex-col h-full">
                     {related.mainImage && (
                       <div className="h-40 relative bg-gray-200">
-                        <Image
-                          src={urlFor(related.mainImage).url()}
+                        <SanityImage
+                          image={related.mainImage}
                           alt={related.mainImage.alt || related.title}
                           fill
                           className="object-cover"
-                        />
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+/>
                       </div>
                     )}
                     {!related.mainImage && (

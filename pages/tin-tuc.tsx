@@ -1,8 +1,7 @@
 import Layout from '../components/Layout'
+import SanityImage from "../components/SanityImage"
 import Link from 'next/link'
-import Image from 'next/image'
 import { getAllArticles, SanityArticle } from '../lib/sanity/queries'
-import { urlFor } from '../lib/sanity/image'
 import { format } from 'date-fns'
 import { vi } from 'date-fns/locale'
 
@@ -45,12 +44,13 @@ export default function TinTucPage({ articles, featuredArticle }: TinTucPageProp
               <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-gray-200">
                 {featuredArticle.mainImage && (
                   <div className="h-56 relative bg-gray-200">
-                    <Image
-                      src={urlFor(featuredArticle.mainImage).url()}
+                    <SanityImage
+                      image={featuredArticle.mainImage}
                       alt={featuredArticle.mainImage.alt || featuredArticle.title}
                       fill
                       className="object-cover"
-                    />
+                    sizes="(max-width: 1280px) 100vw, 1280px"
+/>
                   </div>
                 )}
                 {!featuredArticle.mainImage && (
@@ -84,12 +84,13 @@ export default function TinTucPage({ articles, featuredArticle }: TinTucPageProp
                 <div key={article._id} className="bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-md transition-shadow flex flex-col">
                   {article.mainImage && (
                     <div className="h-40 relative bg-gray-200">
-                      <Image
-                        src={urlFor(article.mainImage).url()}
+                      <SanityImage
+                        image={article.mainImage}
                         alt={article.mainImage.alt || article.title}
                         fill
                         className="object-cover"
-                      />
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+/>
                     </div>
                   )}
                   {!article.mainImage && (

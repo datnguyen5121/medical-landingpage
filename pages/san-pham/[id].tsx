@@ -1,9 +1,9 @@
 import { GetStaticPaths, GetStaticProps } from "next"
 import Link from "next/link"
-import Image from "next/image"
 import { useState } from "react"
 import { PortableText } from "@portabletext/react"
 import Layout from "../../components/Layout"
+import SanityImage from "../../components/SanityImage"
 import { trackQuoteConversion } from "../../lib/gtag"
 import { getAllProductSlugs, getProductBySlugWithGalleries, getRelatedProducts, SanityProduct } from "../../lib/sanity/queries"
 import { urlFor } from "../../lib/sanity/image"
@@ -45,8 +45,8 @@ function ImageGallery({ product }: { product: SanityProduct }) {
   return (
     <div className="space-y-3">
       <div className="bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center h-64 sm:h-80 lg:h-96 relative overflow-hidden group">
-        <Image
-          src={urlFor(currentImage).width(800).height(800).url()}
+        <SanityImage
+          image={currentImage}
           alt={currentImage.alt || "Sản phẩm"}
           fill
           className="object-contain p-6 drop-shadow-md"
@@ -90,8 +90,8 @@ function ImageGallery({ product }: { product: SanityProduct }) {
               onClick={() => setActiveImageIndex(idx)}
               className={`flex-shrink-0 w-20 h-20 rounded-lg border-2 overflow-hidden transition-all ${activeImageIndex === idx ? 'border-blue-700 ring-2 ring-blue-700/50' : 'border-slate-200 hover:border-slate-300'}`}
             >
-              <Image
-                src={urlFor(img).width(100).height(100).url()}
+              <SanityImage
+                image={img}
                 alt={`Ảnh ${idx + 1}`}
                 width={100}
                 height={100}
@@ -119,7 +119,7 @@ function ImageGallery({ product }: { product: SanityProduct }) {
 }
 
 export default function ProductDetail({ product, related }: Props) {
-  const imageUrl = product.mainImage ? urlFor(product.mainImage).width(1200).url() : undefined
+  const imageUrl = product.mainImage ? urlFor(product.mainImage).width(1200).height(630).fit('crop').format('jpg').quality(80).url() : undefined
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -370,8 +370,8 @@ export default function ProductDetail({ product, related }: Props) {
                 >
                   <div className="h-44 bg-slate-100 border-b border-slate-200 flex items-center justify-center relative overflow-hidden">
                     {rel.mainImage ? (
-                      <Image
-                        src={urlFor(rel.mainImage).width(400).height(300).url()}
+                      <SanityImage
+                        image={rel.mainImage}
                         alt={rel.mainImage.alt || rel.name}
                         fill
                         className="object-contain p-4"

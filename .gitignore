@@ -41,3 +41,6 @@ coverage/
 
 # TypeScript incremental cache
 *.tsbuildinfo
+
+# Build kiểm thử riêng
+.next-*/

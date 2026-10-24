@@ -4,7 +4,10 @@ import { sanityClient } from './client'
 export interface SanityImage {
   asset: { _ref: string }
   alt?: string
-  hotspot?: { x: number; y: number }
+  hotspot?: { x: number; y: number; width?: number; height?: number }
+  crop?: { top: number; bottom: number; left: number; right: number }
+  /** Ảnh mờ siêu nhỏ (base64) dùng làm placeholder khi tải */
+  lqip?: string
 }
 
 export interface SanityProduct {
@@ -44,7 +47,7 @@ export interface SanityArticle {
 
 // ============ GROQ fragments dùng chung ============
 
-const IMAGE = `{ asset, alt, hotspot }`
+const IMAGE = `{ asset, alt, hotspot, crop, "lqip": asset->metadata.lqip }`
 
 const PRODUCT_CARD = `
   _id,

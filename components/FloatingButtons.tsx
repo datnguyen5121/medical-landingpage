@@ -41,7 +41,7 @@ const buttons: FloatingButton[] = [
     href: ZALO_URL,
     bgColor: 'bg-blue-500',
     external: true,
-    icon: <Image src="/images/logo-zalo-vector.png" alt="" width={48} height={48} />,
+    icon: <Image src="/images/icons/zalo.png" alt="" width={48} height={48} />,
   },
   ...(MESSENGER_URL
     ? [{ id: 'messenger', label: 'Messenger', href: MESSENGER_URL, bgColor: 'bg-blue-600', external: true, icon: MessengerIcon }]

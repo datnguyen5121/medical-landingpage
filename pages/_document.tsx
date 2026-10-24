@@ -6,7 +6,7 @@ export default function Document() {
   return (
     <Html lang="vi">
       <Head>
-        <link rel="icon" href="/favicon/newlogo.png" type="image/png" />
+        <link rel="icon" href="/favicon/favicon.png" type="image/png" />
         {/* GTM snippet chuẩn của Google, đặt trong <head> */}
         {/* eslint-disable-next-line @next/next/next-script-for-ga */}
         <script

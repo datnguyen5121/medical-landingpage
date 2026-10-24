@@ -1,10 +1,9 @@
 import { GetStaticProps } from "next"
 import Layout from "../components/Layout"
+import SanityImage from "../components/SanityImage"
 import { trackQuoteConversion } from "../lib/gtag"
 import Link from "next/link"
-import Image from "next/image"
 import { getAllProducts, getCategories, SanityProduct } from "../lib/sanity/queries"
-import { urlFor } from "../lib/sanity/image"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/router"
 import { HOTLINE_TEL } from "../lib/config"
@@ -116,13 +115,12 @@ export default function SanPhamPage({ products, categories }: Props) {
                     <Link href={`/san-pham/${product.slug.current}`} className="block">
                     <div className="h-72 w-full max-w-xs bg-slate-50 border-b border-slate-200 flex items-center justify-center relative overflow-hidden mx-auto">
                       {product.mainImage ? (
-                        <Image
-                          src={urlFor(product.mainImage).width(600).height(600).url()}
+                        <SanityImage
+                          image={product.mainImage}
                           alt={product.mainImage.alt || product.name}
                           fill
                           className="object-cover object-center"
                           sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                          loading="lazy"
                         />
                       ) : (
                         <svg className="w-16 h-16 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">

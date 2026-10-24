@@ -1,10 +1,10 @@
 import { GetStaticProps } from "next"
 import Layout from "../components/Layout"
+import HeroCarousel, { type CarouselSlide } from "../components/HeroCarousel"
+import SanityImage from "../components/SanityImage"
 import Link from "next/link"
-import Image from "next/image"
 import { trackQuoteConversion } from "../lib/gtag"
 import { getBestSellerProducts, getAllProducts, SanityProduct } from "../lib/sanity/queries"
-import { urlFor } from "../lib/sanity/image"
 import { HOTLINE_TEL } from "../lib/config"
 
 interface HomePageProps {
@@ -51,6 +51,35 @@ const commitments = [
   },
 ]
 
+// Thêm slide: đặt ảnh 16:9 vào public/images/carousel/ rồi thêm một mục vào đây
+const heroSlides: CarouselSlide[] = [
+  {
+    src: "/images/carousel/buong-oxy-cao-ap.png",
+    alt: "Buồng oxy cao áp MediWellness – phục hồi sâu, tăng cường sức khỏe, nâng cao chất lượng sống. Hotline 0968 348 698",
+    href: `/san-pham?category=${encodeURIComponent("Buồng oxy cao áp")}`,
+  },
+  {
+    src: "/images/carousel/robot-phuc-hoi-chuc-nang-chan.png",
+    alt: "Robot phục hồi chức năng chân MediWellness – đứng lên một lần nữa, kiến tạo cuộc sống không giới hạn. Hotline 0968 348 698",
+    href: `/san-pham?category=${encodeURIComponent("Robot tập phục hồi chức năng")}`,
+  },
+  {
+    src: "/images/carousel/cabin-thai-doc.jpg",
+    alt: "Cabin xông hơi thải độc MediWellness – thư giãn sâu, chăm sóc cơ thể, tái tạo năng lượng",
+    href: `/san-pham?category=${encodeURIComponent("Cabin thải độc sinh học")}`,
+  },
+  {
+    src: "/images/carousel/buong-oxy-cao-ap-oxybarica.png",
+    alt: "Buồng oxy cao áp Oxybarica MediWellness – công nghệ phục hồi và tái tạo sức khỏe toàn diện. Hotline 0968 348 698",
+    href: `/san-pham?category=${encodeURIComponent("Buồng oxy cao áp")}`,
+  },
+  {
+    src: "/images/carousel/robot-phuc-hoi-chuc-nang-chan-aigo-ii.png",
+    alt: "Robot phục hồi chức năng chân AiGo-II MediWellness – giải pháp phục hồi vận động toàn diện tại nhà. Hotline 0968 348 698",
+    href: `/san-pham?category=${encodeURIComponent("Robot tập phục hồi chức năng")}`,
+  },
+]
+
 const clientLogos = [
   "Bệnh viện Bạch Mai",
   "BV Chợ Rẫy",
@@ -63,8 +92,6 @@ const clientLogos = [
 ]
 
 export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
-  const heroProduct = bestSellers.find((p) => p.mainImage) || allProducts.find((p) => p.mainImage)
-
   // Danh mục kèm số lượng và ảnh đại diện (ảnh của sản phẩm đầu tiên có ảnh)
   const categories = Array.from(new Set(allProducts.map((p) => p.category)))
     .sort()
@@ -78,70 +105,9 @@ export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
       title="MediWellness – Thiết Bị Y Tế Chất Lượng Cao"
       description="Nhà nhập khẩu & phân phối thiết bị y tế hàng đầu Việt Nam"
     >
-      {/* ── HERO ─────────────────────────────────────────────────────────── */}
-      <section className="bg-blue-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <p className="section-label text-blue-300 mb-3">Nhà phân phối thiết bị y tế uy tín</p>
-            <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight mb-5 text-balance">
-              Giải Pháp Thiết Bị Y Tế <span className="text-yellow-400">Toàn Diện</span> Cho Cơ Sở Y Tế
-            </h1>
-            <p className="text-blue-200 text-lg leading-relaxed mb-8">
-              MediWellness – Một trong những nhà nhập khẩu &amp; phân phối thiết bị y tế hàng đầu Việt Nam. Hơn 300 sản phẩm đạt tiêu chuẩn quốc tế, phục vụ 100+ cơ sở y tế trên toàn quốc.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Link href="/san-pham" className="px-6 py-3 bg-white text-blue-900 font-semibold rounded text-sm hover:bg-blue-50 transition-colors shadow">
-                Xem Danh Mục Sản Phẩm
-              </Link>
-              <Link href="/lien-he" onClick={trackQuoteConversion} className="px-6 py-3 border border-blue-400 text-white font-semibold rounded text-sm hover:bg-blue-800 transition-colors">
-                Yêu Cầu Báo Giá
-              </Link>
-            </div>
-          </div>
-
-          {/* Ảnh thiết bị chủ lực + chứng nhận */}
-          <div className="space-y-4">
-            {heroProduct?.mainImage && (
-              <Link
-                href={`/san-pham/${heroProduct.slug.current}`}
-                className="block relative aspect-[4/3] bg-white rounded-lg overflow-hidden border border-blue-700"
-              >
-                <Image
-                  src={urlFor(heroProduct.mainImage).width(800).height(600).url()}
-                  alt={heroProduct.mainImage.alt || heroProduct.name}
-                  fill
-                  priority
-                  className="object-contain p-4"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-                <span className="absolute inset-x-0 bottom-0 bg-blue-950/85 px-4 py-2 text-sm font-semibold text-white truncate">
-                  {heroProduct.name}
-                </span>
-              </Link>
-            )}
-            <ul className="grid grid-cols-2 gap-3" aria-label="Chứng nhận và tiêu chuẩn">
-              {[
-                { cert: "ISO 13485", desc: "Quản lý chất lượng" },
-                { cert: "CE Marking", desc: "Tiêu chuẩn châu Âu" },
-                { cert: "GMP-WHO", desc: "Sản xuất tốt" },
-                { cert: "FDA Cleared", desc: "Chứng nhận Hoa Kỳ" },
-              ].map((c) => (
-                <li key={c.cert} className="flex items-center gap-3 p-3 bg-blue-800/60 rounded border border-blue-700">
-                  <span className="w-8 h-8 bg-yellow-400 rounded flex items-center justify-center shrink-0" aria-hidden="true">
-                    <svg className="w-4 h-4 text-blue-900" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </span>
-                  <span>
-                    <span className="block text-white font-semibold text-sm">{c.cert}</span>
-                    <span className="block text-blue-200 text-xs">{c.desc}</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
+      {/* ── HERO CAROUSEL ────────────────────────────────────────────────── */}
+      <h1 className="sr-only">MediWellness – Giải pháp thiết bị y tế toàn diện cho cơ sở y tế</h1>
+      <HeroCarousel slides={heroSlides} />
 
       {/* ── STATS BAR ─────────────────────────────────────────────────────── */}
       <section className="bg-white border-b border-slate-200">
@@ -187,8 +153,8 @@ export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
               >
                 <div className="relative h-24 w-full rounded bg-slate-50 overflow-hidden flex items-center justify-center">
                   {cat.image ? (
-                    <Image
-                      src={urlFor(cat.image).width(300).height(200).url()}
+                    <SanityImage
+                      image={cat.image}
                       alt=""
                       fill
                       className="object-contain p-2"
@@ -231,8 +197,8 @@ export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
                 <Link href={`/san-pham/${product.slug.current}`} className="block">
                 <div className="h-56 bg-slate-50 border-b border-slate-200 flex items-center justify-center relative overflow-hidden">
                   {product.mainImage ? (
-                    <Image
-                      src={urlFor(product.mainImage).width(400).height(300).url()}
+                    <SanityImage
+                      image={product.mainImage}
                       alt={product.mainImage.alt || product.name}
                       fill
                       className="object-contain p-4 drop-shadow-sm"
