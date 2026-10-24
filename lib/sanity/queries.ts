@@ -1,5 +1,6 @@
 import type { PortableTextBlock } from '@portabletext/types'
 import { sanityClient } from './client'
+import { buildCategoryOptions, type CategoryOption } from '../category'
 
 export interface SanityImage {
   asset: { _ref: string }
@@ -14,7 +15,9 @@ export interface SanityProduct {
   _id: string
   name: string
   slug: { current: string }
+  /** Tên danh mục hiển thị (từ type `category`, hoặc trường cũ nếu chưa chuyển) */
   category: string
+  categorySlug?: string | null
   shortDescription?: string
   features?: string[]
   specs?: { label: string; value: string }[]
@@ -49,11 +52,14 @@ export interface SanityArticle {
 
 const IMAGE = `{ asset, alt, hotspot, crop, "lqip": asset->metadata.lqip }`
 
+// Danh mục: ưu tiên type `category` (categoryRef); sản phẩm chưa chuyển thì dùng trường chuỗi cũ
+const PRODUCT_CATEGORY = `"category": coalesce(categoryRef->name, category), "categorySlug": categoryRef->slug.current`
+
 const PRODUCT_CARD = `
   _id,
   name,
   slug,
-  category,
+  ${PRODUCT_CATEGORY},
   shortDescription,
   isBestSeller,
   order,
@@ -117,15 +123,19 @@ export async function getRelatedProducts(
   limit = 4
 ): Promise<SanityProduct[]> {
   return sanityClient.fetch(
-    `*[_type == "product" && isHidden != true && category == $category && slug.current != $currentSlug] | order(order asc) [0...$limit] { ${PRODUCT_CARD} }`,
+    `*[_type == "product" && isHidden != true && coalesce(categoryRef->name, category) == $category && slug.current != $currentSlug] | order(order asc) [0...$limit] { ${PRODUCT_CARD} }`,
     { category, currentSlug, limit }
   )
 }
 
-// Danh sách danh mục (bộ lọc)
-export async function getCategories(): Promise<string[]> {
-  const data = await sanityClient.fetch(`array::unique(*[_type == "product" && isHidden != true].category)`)
-  return data || []
+// Danh sách danh mục cho bộ lọc: theo thứ tự trong Studio, chỉ gồm danh mục đang có sản phẩm hiển thị
+export async function getCategories(): Promise<CategoryOption[]> {
+  const data: { docs: { name: string; slug?: string }[]; used: { name: string; slug?: string }[] } =
+    await sanityClient.fetch(`{
+      "docs": *[_type == "category" && defined(slug.current)] | order(order asc, name asc) { name, "slug": slug.current },
+      "used": *[_type == "product" && isHidden != true] { "name": coalesce(categoryRef->name, category), "slug": categoryRef->slug.current }
+    }`)
+  return buildCategoryOptions(data.docs ?? [], data.used ?? [])
 }
 
 // ============ ARTICLES ============

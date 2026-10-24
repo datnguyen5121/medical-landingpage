@@ -4,29 +4,23 @@ import SanityImage from "../components/SanityImage"
 import { trackQuoteConversion } from "../lib/gtag"
 import Link from "next/link"
 import { getAllProducts, getCategories, SanityProduct } from "../lib/sanity/queries"
-import { useState, useEffect } from "react"
 import { useRouter } from "next/router"
 import { HOTLINE_TEL } from "../lib/config"
+import { categoryHref, categoryKey, resolveCategory, type CategoryOption } from "../lib/category"
 
 interface Props {
   products: SanityProduct[]
-  categories: string[]
+  categories: CategoryOption[]
 }
 
 export default function SanPhamPage({ products, categories }: Props) {
   const router = useRouter()
-  const [activeCategory, setActiveCategory] = useState<string>("Tất cả")
+  // Danh mục đang chọn lấy từ URL (?category=slug); vẫn hiểu link cũ dùng tên có dấu
+  const active = resolveCategory(categories, router.query.category as string | undefined)
+  const activeKey = active?.key ?? ""
 
-  useEffect(() => {
-    const cat = router.query.category as string
-    if (cat) setActiveCategory(cat)
-  }, [router.query.category])
-
-  const allCategories = ["Tất cả", ...categories]
-  const filtered =
-    activeCategory === "Tất cả"
-      ? products
-      : products.filter((p) => p.category === activeCategory)
+  const allCategories: CategoryOption[] = [{ key: "", name: "Tất cả" }, ...categories]
+  const filtered = active ? products.filter((p) => categoryKey(p) === active.key) : products
 
   return (
     <Layout
@@ -57,23 +51,23 @@ export default function SanPhamPage({ products, categories }: Props) {
                 </div>
                 <div className="divide-y divide-slate-100">
                   {allCategories.map((cat) => {
-                  const count = cat === "Tất cả"
+                    const count = cat.key === ""
                       ? products.length
-                      : products.filter((p) => p.category === cat).length
-                  const href = cat === "Tất cả" ? "/san-pham" : `/san-pham?category=${encodeURIComponent(cat)}`
+                      : products.filter((p) => categoryKey(p) === cat.key).length
+                    const href = cat.key === "" ? "/san-pham" : categoryHref(cat.key)
                     return (
                       <Link
-                        key={cat}
+                        key={cat.key || "all"}
                         href={href}
                         className={`block w-full text-left px-4 py-4 text-base transition-colors flex items-center justify-between gap-2 ${
-                          activeCategory === cat
+                          activeKey === cat.key
                             ? "bg-blue-50 text-blue-800 font-semibold border-l-2 border-blue-700"
                             : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                         }`}
                       >
-                        <span>{cat}</span>
+                        <span>{cat.name}</span>
                         <span className={`text-sm rounded-full px-2 py-0.5 shrink-0 ${
-                          activeCategory === cat ? "bg-blue-200 text-blue-800" : "bg-slate-100 text-slate-400"
+                          activeKey === cat.key ? "bg-blue-200 text-blue-800" : "bg-slate-100 text-slate-400"
                         }`}>
                           {count}
                         </span>
@@ -103,8 +97,8 @@ export default function SanPhamPage({ products, categories }: Props) {
               <div className="flex items-center justify-between mb-5">
                 <p className="text-sm text-slate-500">
                   <span className="font-semibold text-slate-800">{filtered.length}</span> sản phẩm
-                  {activeCategory !== "Tất cả" && (
-                    <span> trong <span className="text-blue-700 font-semibold">{activeCategory}</span></span>
+                  {active && (
+                    <span> trong <span className="text-blue-700 font-semibold">{active.name}</span></span>
                   )}
                 </p>
               </div>

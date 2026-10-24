@@ -8,6 +8,7 @@ import { trackQuoteConversion } from "../../lib/gtag"
 import { getAllProductSlugs, getProductBySlugWithGalleries, getRelatedProducts, SanityProduct } from "../../lib/sanity/queries"
 import { urlFor } from "../../lib/sanity/image"
 import { HOTLINE_TEL, ZALO_URL, SITE_NAME } from "../../lib/config"
+import { categoryHref, categoryKey } from "../../lib/category"
 
 interface Props {
   product: SanityProduct
@@ -150,7 +151,7 @@ export default function ProductDetail({ product, related }: Props) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
             <Link
-              href={`/san-pham?category=${encodeURIComponent(product.category)}`}
+              href={categoryHref(categoryKey(product))}
               className="hover:text-blue-700 transition-colors shrink-0"
             >
               {product.category}
@@ -351,7 +352,7 @@ export default function ProductDetail({ product, related }: Props) {
                 <h2 className="text-2xl font-bold text-slate-900">Sản Phẩm Liên Quan</h2>
               </div>
               <Link
-                href={`/san-pham?category=${encodeURIComponent(product.category)}`}
+                href={categoryHref(categoryKey(product))}
                 className="text-sm font-semibold text-blue-700 hover:text-blue-900 flex items-center gap-1"
               >
 

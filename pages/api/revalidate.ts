@@ -15,7 +15,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const type = req.body?._type as string | undefined
   const slug = req.body?.slug as string | undefined
   const paths = new Set<string>(['/'])
-  if (type === 'product') {
+  if (type === 'category') {
+    paths.add('/san-pham')
+  } else if (type === 'product') {
     paths.add('/san-pham')
     if (slug) paths.add(`/san-pham/${slug}`)
   } else if (type === 'article') {

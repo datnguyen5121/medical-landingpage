@@ -2,6 +2,7 @@ import { GetStaticProps } from "next"
 import Layout from "../components/Layout"
 import HeroCarousel, { type CarouselSlide } from "../components/HeroCarousel"
 import SanityImage from "../components/SanityImage"
+import { categoryHref, categoryKey } from "../lib/category"
 import Link from "next/link"
 import { trackQuoteConversion } from "../lib/gtag"
 import { getBestSellerProducts, getAllProducts, SanityProduct } from "../lib/sanity/queries"
@@ -51,6 +52,13 @@ const commitments = [
   },
 ]
 
+// Slug danh mục (khớp với trường Slug của danh mục trong Studio)
+const CATEGORY_SLUG = {
+  oxy: "buong-oxy-cao-ap",
+  robot: "robot-tap-phuc-hoi-chuc-nang",
+  cabin: "cabin-thai-doc-sinh-hoc",
+}
+
 // Carousel: màn hình laptop (từ 1024px) dùng ảnh trong public/images/carousel/laptop-169,
 // màn hình nhỏ hơn dùng ảnh trong public/images/carousel/mobile.
 // Thêm slide: đặt ảnh vào đúng thư mục rồi thêm một mục vào mảng tương ứng.
@@ -63,22 +71,22 @@ const laptopSlides: CarouselSlide[] = [
   {
     src: "/images/carousel/laptop-169/buong-oxy-cao-ap.png",
     alt: "Buồng oxy cao áp MediWellness. Hotline 0968 348 698",
-    href: `/san-pham?category=${encodeURIComponent("Buồng oxy cao áp")}`,
+    href: categoryHref(CATEGORY_SLUG.oxy),
   },
   {
     src: "/images/carousel/laptop-169/robot-phuc-hoi-chuc-nang-chan.png",
     alt: "Robot phục hồi chức năng chân MediWellness – đứng lên một lần nữa, kiến tạo cuộc sống không giới hạn",
-    href: `/san-pham?category=${encodeURIComponent("Robot tập phục hồi chức năng")}`,
+    href: categoryHref(CATEGORY_SLUG.robot),
   },
   {
     src: "/images/carousel/laptop-169/cabin-xong-hoi-thai-doc.png",
     alt: "Cabin xông hơi thải độc MediWellness – thư giãn sâu, chăm sóc cơ thể, tái tạo năng lượng",
-    href: `/san-pham?category=${encodeURIComponent("Cabin thải độc sinh học")}`,
+    href: categoryHref(CATEGORY_SLUG.cabin),
   },
   {
     src: "/images/carousel/laptop-169/robot-phuc-hoi-chuc-nang-chan-aigo-ii.png",
     alt: "Robot phục hồi chức năng chân AiGo-II MediWellness – giải pháp phục hồi vận động toàn diện tại nhà. Hotline 0968 348 698",
-    href: `/san-pham?category=${encodeURIComponent("Robot tập phục hồi chức năng")}`,
+    href: categoryHref(CATEGORY_SLUG.robot),
   },
 ]
 
@@ -86,27 +94,27 @@ const mobileSlides: CarouselSlide[] = [
   {
     src: "/images/carousel/mobile/buong-oxy-cao-ap.png",
     alt: "Buồng oxy cao áp MediWellness – phục hồi sâu, tăng cường sức khỏe, nâng cao chất lượng sống. Hotline 0968 348 698",
-    href: `/san-pham?category=${encodeURIComponent("Buồng oxy cao áp")}`,
+    href: categoryHref(CATEGORY_SLUG.oxy),
   },
   {
     src: "/images/carousel/mobile/robot-phuc-hoi-chuc-nang-chan.png",
     alt: "Robot phục hồi chức năng chân MediWellness – đứng lên một lần nữa, kiến tạo cuộc sống không giới hạn. Hotline 0968 348 698",
-    href: `/san-pham?category=${encodeURIComponent("Robot tập phục hồi chức năng")}`,
+    href: categoryHref(CATEGORY_SLUG.robot),
   },
   {
     src: "/images/carousel/mobile/cabin-thai-doc.jpg",
     alt: "Cabin xông hơi thải độc MediWellness – thư giãn sâu, chăm sóc cơ thể, tái tạo năng lượng",
-    href: `/san-pham?category=${encodeURIComponent("Cabin thải độc sinh học")}`,
+    href: categoryHref(CATEGORY_SLUG.cabin),
   },
   {
     src: "/images/carousel/mobile/buong-oxy-cao-ap-oxybarica.png",
     alt: "Buồng oxy cao áp Oxybarica MediWellness – công nghệ phục hồi và tái tạo sức khỏe toàn diện. Hotline 0968 348 698",
-    href: `/san-pham?category=${encodeURIComponent("Buồng oxy cao áp")}`,
+    href: categoryHref(CATEGORY_SLUG.oxy),
   },
   {
     src: "/images/carousel/mobile/robot-phuc-hoi-chuc-nang-chan-aigo-ii.png",
     alt: "Robot phục hồi chức năng chân AiGo-II MediWellness – giải pháp phục hồi vận động toàn diện tại nhà. Hotline 0968 348 698",
-    href: `/san-pham?category=${encodeURIComponent("Robot tập phục hồi chức năng")}`,
+    href: categoryHref(CATEGORY_SLUG.robot),
   },
 ]
 
@@ -123,12 +131,12 @@ const clientLogos = [
 
 export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
   // Danh mục kèm số lượng và ảnh đại diện (ảnh của sản phẩm đầu tiên có ảnh)
-  const categories = Array.from(new Set(allProducts.map((p) => p.category)))
-    .sort()
-    .map((name) => {
-      const items = allProducts.filter((p) => p.category === name)
-      return { name, count: items.length, image: items.find((p) => p.mainImage)?.mainImage }
+  const categories = Array.from(new Set(allProducts.map(categoryKey)))
+    .map((key) => {
+      const items = allProducts.filter((p) => categoryKey(p) === key)
+      return { key, name: items[0].category, count: items.length, image: items.find((p) => p.mainImage)?.mainImage }
     })
+    .sort((a, b) => a.name.localeCompare(b.name, "vi"))
 
   return (
     <Layout
@@ -178,7 +186,7 @@ export default function HomePage({ bestSellers, allProducts }: HomePageProps) {
             {categories.map((cat) => (
               <Link
                 key={cat.name}
-                href={`/san-pham?category=${encodeURIComponent(cat.name)}`}
+                href={categoryHref(cat.key)}
                 className="flex flex-col gap-3 p-4 bg-white border border-slate-200 rounded-lg hover:border-blue-500 hover:shadow-sm transition-all group focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-700"
               >
                 <div className="relative h-24 w-full rounded bg-slate-50 overflow-hidden flex items-center justify-center">

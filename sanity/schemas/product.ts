@@ -25,32 +25,22 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'category',
+      name: 'categoryRef',
       title: 'Danh mục',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Cabin thải độc sinh học', value: 'Cabin thải độc sinh học' },
-          { title: 'Buồng oxy cao áp', value: 'Buồng oxy cao áp' },
-          { title: 'Máy vỗ rung long đờm', value: 'Máy vỗ rung long đờm' },
-          { title: 'Máy garo hơi tự động', value: 'Máy garo hơi tự động' },
-          { title: 'Robot tập phục hồi chức năng', value: 'Robot tập phục hồi chức năng' },
-          { title: 'Thiết bị tập phục hồi chức năng', value: 'Thiết bị tập phục hồi chức năng' },
-          { title: 'Máy xông thuốc', value: 'Máy xông thuốc' },
-          { title: 'Máy vi sóng trị liệu', value: 'Máy vi sóng trị liệu' },
-          { title: 'Máy terahertz điều trị', value: 'Máy terahertz điều trị' },
-          { title: 'Máy từ trường trị liệu', value: 'Máy từ trường trị liệu' },
-          { title: 'Máy điện xung trị liệu', value: 'Máy điện xung trị liệu' },
-          { title: 'Máy siêu âm trị liệu', value: 'Máy siêu âm trị liệu' },
-          { title: 'Máy xung kích trị liệu', value: 'Máy xung kích trị liệu' },
-          { title: 'Máy Laser trị liệu', value: 'Máy Laser trị liệu' },
-          { title: 'Máy kéo giãn cột sống', value: 'Máy kéo giãn cột sống' },
-          { title: 'Máy kích thích nuốt và phát âm', value: 'Máy kích thích nuốt và phát âm' },
-          { title: 'Máy đo điện cơ đồ (EMG)', value: 'Máy đo điện cơ đồ (EMG)' },
-          { title: 'Máy làm nóng túi chườm', value: 'Máy làm nóng túi chườm' },
-        ],
-      },
+      type: 'reference',
+      to: [{ type: 'category' }],
+      description: 'Chọn danh mục sản phẩm. Quản lý danh sách danh mục ở mục "Danh mục sản phẩm".',
       validation: (Rule) => Rule.required(),
+    }),
+    // Trường cũ (chuỗi): giữ để website vẫn đọc được sản phẩm chưa chuyển sang `categoryRef`.
+    // Xóa trường này sau khi mọi sản phẩm đã có `categoryRef`.
+    defineField({
+      name: 'category',
+      title: 'Danh mục (cũ)',
+      type: 'string',
+      readOnly: true,
+      hidden: ({ document }) => !!document?.categoryRef,
+      description: 'Trường cũ, chỉ đọc. Hãy chọn danh mục ở trường "Danh mục" phía trên.',
     }),
     defineField({
       name: 'mainImage',
@@ -178,11 +168,12 @@ export default defineType({
     select: {
       title: 'name',
       category: 'category',
+      categoryName: 'categoryRef.name',
       hidden: 'isHidden',
       media: 'mainImage',
     },
-    prepare({ title, category, hidden, media }) {
-      return { title, subtitle: [hidden ? '[Ẩn]' : null, category].filter(Boolean).join(' • '), media }
+    prepare({ title, category, categoryName, hidden, media }) {
+      return { title, subtitle: [hidden ? '[Ẩn]' : null, categoryName ?? category].filter(Boolean).join(' • '), media }
     },
   },
   orderings: [
