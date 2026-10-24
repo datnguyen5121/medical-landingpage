@@ -6,7 +6,9 @@ export default function Document() {
   return (
     <Html lang="vi">
       <Head>
-        <link rel="icon" href="/favicon/favicon.png" type="image/png" />
+        <link rel="icon" href="/favicon/favicon-32.png" type="image/png" sizes="32x32" />
+        <link rel="icon" href="/favicon/favicon.png" type="image/png" sizes="192x192" />
+        <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" />
         {/* GTM snippet chuẩn của Google, đặt trong <head> */}
         {/* eslint-disable-next-line @next/next/next-script-for-ga */}
         <script

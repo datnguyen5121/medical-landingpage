@@ -100,6 +100,7 @@ const POSTER_FEATHER_MASK = `linear-gradient(to right, transparent, #000 ${FEATH
 function Track({ slides, poster, sizes, interval, autoplay, reducedMotion }: TrackProps) {
   const aspect = poster.width / poster.height
   const swiperRef = useRef<SwiperInstance | null>(null)
+  const [swiper, setSwiper] = useState<SwiperInstance | null>(null)
   const dotsRef = useRef<HTMLDivElement>(null)
   const frameRef = useRef<HTMLDivElement>(null)
   const [active, setActive] = useState(0)
@@ -126,6 +127,14 @@ function Track({ slides, poster, sizes, interval, autoplay, reducedMotion }: Tra
     return () => observer.disconnect()
   }, [aspect])
 
+  // Đổi tham số autoplay sau khi Swiper đã khởi tạo không làm nó chạy lại, nên điều khiển bằng start/stop:
+  // chỉ bộ ảnh đang hiển thị (và người dùng không bật "giảm chuyển động") mới tự chuyển slide
+  useEffect(() => {
+    if (!swiper?.autoplay) return
+    if (autoplay) swiper.autoplay.start()
+    else swiper.autoplay.stop()
+  }, [swiper, autoplay])
+
   if (count === 0) return null
   const multiple = count > 1
 
@@ -140,7 +149,10 @@ function Track({ slides, poster, sizes, interval, autoplay, reducedMotion }: Tra
     >
       <Swiper
         modules={[A11y, Autoplay, Keyboard]}
-        onSwiper={(s) => (swiperRef.current = s)}
+        onSwiper={(s) => {
+          swiperRef.current = s
+          setSwiper(s)
+        }}
         onSlideChange={(s) => setActive(s.realIndex)}
         onAutoplayTimeLeft={(_, __, progress) => {
           dotsRef.current?.style.setProperty('--progress', String(1 - progress))
@@ -151,11 +163,7 @@ function Track({ slides, poster, sizes, interval, autoplay, reducedMotion }: Tra
         grabCursor={multiple}
         allowTouchMove={multiple}
         keyboard={{ enabled: true }}
-        autoplay={
-          multiple && autoplay
-            ? { delay: interval, disableOnInteraction: false, pauseOnMouseEnter: true }
-            : false
-        }
+        autoplay={multiple ? { delay: interval, disableOnInteraction: false, pauseOnMouseEnter: true } : false}
         a11y={{
           prevSlideMessage: 'Slide trước',
           nextSlideMessage: 'Slide tiếp theo',

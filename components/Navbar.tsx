@@ -1,4 +1,5 @@
 import Link from "next/link"
+import BrandMark from "./BrandMark"
 import { useRouter } from "next/router"
 import { useState } from "react"
 import { trackQuoteConversion } from "../lib/gtag"
@@ -50,13 +51,9 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 shrink-0">
-            <div className="w-11 h-11 bg-blue-800 rounded flex items-center justify-center">
-              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-            </div>
+            <BrandMark size={48} />
             <div>
-              <span className="text-xl font-bold text-blue-900 tracking-tight leading-none block">MEDI WELLNESS</span>
+              <span className="text-xl font-bold text-blue-800 tracking-tight leading-none block">Medi WellNess</span>
               <span className="text-xs text-slate-500 leading-none tracking-wide">THIẾT BỊ Y TẾ CHẤT LƯỢNG CAO</span>
             </div>
           </Link>

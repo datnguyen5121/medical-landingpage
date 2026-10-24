@@ -1,3 +1,4 @@
+import BrandMark from "./BrandMark"
 import Link from "next/link"
 import { HOTLINE_TEL, ADDRESS } from "../lib/config"
 
@@ -9,11 +10,7 @@ export default function Footer() {
         {/* Brand */}
         <div className="md:col-span-4">
           <Link href="/" className="flex items-center gap-2.5 mb-4">
-            <div className="w-9 h-9 bg-blue-600 rounded flex items-center justify-center shrink-0">
-              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-            </div>
+            <BrandMark size={40} />
             <div>
               <span className="text-base font-bold text-white tracking-tight leading-none block">MEDI WELLNESS</span>
               <span className="text-[10px] text-slate-400 leading-none tracking-wide">THIẾT BỊ Y TẾ</span>
