@@ -64,7 +64,7 @@ const CATEGORY_SLUG = {
 // Thêm slide: đặt ảnh vào đúng thư mục rồi thêm một mục vào mảng tương ứng.
 const laptopSlides: CarouselSlide[] = [
   {
-    src: "/images/carousel/laptop-169/giai-phap-thiet-bi-y-te-toan-dien.png",
+    src: "/images/carousel/laptop-169/giai-phap-thiet-bi-y-te-toan-dien-v2.png",
     alt: "MediWellness – nhà phân phối thiết bị y tế uy tín, giải pháp thiết bị y tế toàn diện cho cơ sở y tế. Hơn 300 sản phẩm, phục vụ 100+ cơ sở y tế trên toàn quốc",
     href: "/san-pham",
   },
@@ -91,6 +91,11 @@ const laptopSlides: CarouselSlide[] = [
 ]
 
 const mobileSlides: CarouselSlide[] = [
+  {
+    src: "/images/carousel/mobile/giai-phap-thiet-bi-y-te-toan-dien-v2.png",
+    alt: "MediWellness – nhà phân phối thiết bị y tế uy tín, giải pháp thiết bị y tế toàn diện cho cơ sở y tế. Hơn 300 sản phẩm, phục vụ 100+ cơ sở y tế trên toàn quốc",
+    href: "/san-pham",  
+  },
   {
     src: "/images/carousel/mobile/buong-oxy-cao-ap.png",
     alt: "Buồng oxy cao áp MediWellness – phục hồi sâu, tăng cường sức khỏe, nâng cao chất lượng sống. Hotline 0968 348 698",
