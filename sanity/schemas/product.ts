@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity'
+import { orderRankField } from '@sanity/orderable-document-list'
 import { slugifyVi } from '../lib/slugify'
 import { altTextField, hiddenField } from '../lib/fields'
 
@@ -156,12 +157,15 @@ export default defineType({
       description: 'Nếu bỏ trống sẽ dùng tên sản phẩm. Tối đa 60 ký tự',
       validation: (Rule) => Rule.max(60),
     }),
+    // Thứ tự hiển thị: kéo-thả trong Studio (Sản phẩm → chọn danh mục). Không cần nhập tay.
+    orderRankField({ type: 'product' }),
+    // Trường cũ (số): chỉ giữ để tham khảo / quay lại, website đã chuyển sang `orderRank`.
     defineField({
       name: 'order',
-      title: 'Thứ tự hiển thị',
+      title: 'Thứ tự hiển thị (cũ)',
       type: 'number',
-      description: 'Số nhỏ hơn hiển thị trước',
-      initialValue: 999,
+      readOnly: true,
+      hidden: true,
     }),
   ],
   preview: {
@@ -180,7 +184,7 @@ export default defineType({
     {
       title: 'Thứ tự hiển thị',
       name: 'orderAsc',
-      by: [{ field: 'order', direction: 'asc' }],
+      by: [{ field: 'orderRank', direction: 'asc' }],
     },
     {
       title: 'Tên A-Z',

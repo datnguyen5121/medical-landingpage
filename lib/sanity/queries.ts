@@ -82,14 +82,14 @@ const ARTICLE_CARD = `
 // Danh sách sản phẩm (trang danh sách, trang chủ)
 export async function getAllProducts(): Promise<SanityProduct[]> {
   return sanityClient.fetch(
-    `*[_type == "product" && isHidden != true] | order(order asc, name asc) { ${PRODUCT_CARD}, features }`
+    `*[_type == "product" && isHidden != true] | order(orderRank asc, order asc, name asc) { ${PRODUCT_CARD}, features }`
   )
 }
 
 // Sản phẩm bán chạy (trang chủ)
 export async function getBestSellerProducts(limit: number = 8): Promise<SanityProduct[]> {
   return sanityClient.fetch(
-    `*[_type == "product" && isHidden != true && isBestSeller == true] | order(order asc, name asc) [0...$limit] { ${PRODUCT_CARD}, features }`,
+    `*[_type == "product" && isHidden != true && isBestSeller == true] | order(orderRank asc, order asc, name asc) [0...$limit] { ${PRODUCT_CARD}, features }`,
     { limit }
   )
 }
@@ -123,7 +123,7 @@ export async function getRelatedProducts(
   limit = 4
 ): Promise<SanityProduct[]> {
   return sanityClient.fetch(
-    `*[_type == "product" && isHidden != true && coalesce(categoryRef->name, category) == $category && slug.current != $currentSlug] | order(order asc) [0...$limit] { ${PRODUCT_CARD} }`,
+    `*[_type == "product" && isHidden != true && coalesce(categoryRef->name, category) == $category && slug.current != $currentSlug] | order(orderRank asc, order asc) [0...$limit] { ${PRODUCT_CARD} }`,
     { category, currentSlug, limit }
   )
 }
